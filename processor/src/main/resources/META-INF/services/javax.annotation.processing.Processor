@@ -1,1 +1,1 @@
-ch.raffael.contracts.processor.apt.ParameterMapProcessor
+ch.raffael.contracts.processor.pmap.ParameterMapAnnotationProcessor

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.apt;
+package ch.raffael.contracts.processor.pmap;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,8 +45,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-
-import ch.raffael.contracts.processor.pmap.ParameterMap;
 
 import static ch.raffael.contracts.processor.ContractsProcessor.*;
 import static org.objectweb.asm.Opcodes.*;
@@ -96,7 +94,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-public class ParameterMapProcessor extends AbstractProcessor {
+public class ParameterMapAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
