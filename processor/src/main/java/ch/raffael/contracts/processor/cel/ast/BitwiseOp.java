@@ -15,47 +15,51 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import com.google.common.base.Objects;
+
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public abstract class BinaryOperation extends CelNode {
+public final class BitwiseOp extends BinaryOp {
 
-    private final CelNode left;
-    private final CelNode right;
+    private final Kind kind;
 
-    BinaryOperation(@NotNull CelNode left, @NotNull CelNode right) {
-        this.left = left;
-        this.right = right;
+    BitwiseOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        super(position, left, right);
+        this.kind = kind;
+    }
+
+    @Override
+    protected void toString(Objects.ToStringHelper toString) {
+        toString.addValue(kind);
+        super.toString(toString);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ( !super.equals(obj) ) {
+        if ( super.equals(obj) ) {
+            return ((BitwiseOp)obj).kind == kind;
+        }
+        else {
             return false;
         }
-        BinaryOperation that = (BinaryOperation)obj;
-        return left.equals(that.left)
-                && right.equals(that.right);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = appendHash(hash, left);
-        hash = appendHash(hash, right);
-        return hash;
+        return appendHash(super.hashCode(), kind);
     }
 
-    @NotNull
-    public CelNode getLeft() {
-        return left;
+    public Kind getKind() {
+        return kind;
     }
 
-    @NotNull
-    public CelNode getRight() {
-        return right;
+    public static enum Kind {
+        AND, OR, XOR
     }
+
 }

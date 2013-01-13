@@ -107,41 +107,6 @@ package ch.raffael.contracts.processor.cel;
 
 @members {
 
-	protected BinaryOperation binary(Token tok, CelNode left, CelNode right) {
-		switch ( tok.getType() )  {
-		case EQ:
-			return Nodes.equal(left, right);
-		case NE:
-			return Nodes.notEqual(left, right);
-		case GT:
-			return Nodes.greaterThan(left, right);
-		case GE:
-			return Nodes.greaterOrEqual(left, right);
-		case LT:
-			return Nodes.lessThan(left, right);
-		case LE:
-			return Nodes.lessOrEqual(left, right);
-		case LEFT_SHIFT:
-			return Nodes.leftShift(left, right);
-		case RIGHT_SHIFT:
-			return Nodes.rightShift(left, right);
-		case URIGHT_SHIFT:
-			return Nodes.unsignedRightShift(left, right);
-		case ADD:
-			return Nodes.addition(left, right);
-		case SUB:
-			return Nodes.substraction(left, right);
-		case MUL:
-			return Nodes.multiplication(left, right);
-		case DIV:
-			return Nodes.division(left, right);
-		case MOD:
-			return Nodes.modulo(left, right);
-		default:
-			throw new IllegalArgumentException("Unexpected token: "+tok);
-		}
-	}
-	
 	private Assertion assertion;
 	
 	public void init(Assertion assertion) {
@@ -152,11 +117,16 @@ package ch.raffael.contracts.processor.cel;
 		return assertion;
 	}
 
+	BlankNode blank() {
+		return Nodes.blank(input.LT(1));
+	}
+
 }
 
-assertion
-	:	(FINALLY { assertion.setFinally(true); })?
-		topLevelExpression { assertion.ifs($topLevelExpression.ifs).expression($topLevelExpression.expr); }
+assertion returns [Assertion node]
+	:	FINALLY?
+		ifExpression
+		{ Nodes.assertion($FINALLY!=null ? new Position($FINALLY.getLine(), $FINALLY.getCharPositionInLine()) : $ifExpression.node.getPosition(), $ifExpression.node, $FINALLY!=null); }
 		EOF
 	;
 
@@ -164,81 +134,83 @@ assertion
 	:	(IF PAREN_OPEN! expression PAREN_CLOSE!)* expression
 	;*/
 
-topLevelExpression returns [List<CelNode> ifs=new LinkedList<>(), CelNode expr=Nodes.blank()]
-	:	(ifExpression {$ifs.add($ifExpression.node);})*
-		expression { $expr = $expression.node; }
+ifExpression returns [AstNode node=blank()]
+	:	tok=IF PAREN_OPEN cond=expression PAREN_CLOSE expr=expression
+			{$node=Nodes.ifExpression($tok, $cond.node, $expr.node);}
+	|	simple=expression {$node=$simple.node;}
 	;
 
-ifExpression returns [CelNode node=Nodes.blank()]
-	:	IF PAREN_OPEN expression PAREN_CLOSE
-	;
-
-expression returns [CelNode node=Nodes.blank()]
+expression returns [AstNode node=blank()]
 	:	logicalOr {$node=$logicalOr.node;}
-		( CONDITIONAL t=expression COLON f=expression {$node=Nodes.conditional(node, $t.node, $f.node);})?
+		( tok=CONDITIONAL t=expression COLON f=expression {$node=Nodes.conditionalOp($tok, $node, $t.node, $f.node);})?
 	;
 
-logicalOr returns [CelNode node=Nodes.blank()]
+logicalOr returns [AstNode node=blank()]
 	:	first=logicalAnd {$node=$first.node;}
-		( LOGICAL_OR next=logicalAnd {$node=Nodes.logicalOr($node, $next.node);} )*
+		( LOGICAL_OR next=logicalAnd {$node=Nodes.logicalOp($LOGICAL_OR, $node, $next.node);} )*
 	;
-logicalAnd returns [CelNode node=Nodes.blank()]
+logicalAnd returns [AstNode node=blank()]
 	:	first=bitwiseOr {$node=$first.node;}
-		( LOGICAL_AND next=bitwiseOr {$node=Nodes.logicalAnd($node, $next.node);} )*
+		( LOGICAL_AND next=bitwiseOr {$node=Nodes.logicalOp($LOGICAL_AND, $node, $next.node);} )*
 	;
-bitwiseOr returns [CelNode node=Nodes.blank()]
+bitwiseOr returns [AstNode node=blank()]
 	:	first=bitwiseXor {$node=$first.node;}
-		( BITWISE_OR next=bitwiseXor {$node=Nodes.bitwiseXor($node, $next.node);} )*
+		( BITWISE_OR next=bitwiseXor {$node=Nodes.bitwiseOp($BITWISE_OR, $node, $next.node);} )*
 	;
-bitwiseXor returns [CelNode node=Nodes.blank()]
+bitwiseXor returns [AstNode node=blank()]
 	:	first=bitwiseAnd {$node=$first.node;}
-		( BITWISE_XOR next=bitwiseAnd {$node=Nodes.bitwiseXor($node, $next.node);} )*
+		( BITWISE_XOR next=bitwiseAnd {$node=Nodes.bitwiseOp($BITWISE_XOR, $node, $next.node);} )*
 	;
-bitwiseAnd returns [CelNode node=Nodes.blank()]
+bitwiseAnd returns [AstNode node=blank()]
 	:	equality ( BITWISE_AND equality )*
 	;
 
-equality returns [CelNode node=Nodes.blank()]
+equality returns [AstNode node=blank()]
 	:	( first=relational {$node=$first.node;}
 		| first=instanceOf {$node=$first.node;}
 		)
 		( op=(EQ|NE)
 			(next=relational
-			|next=instanceOf) {$node=binary(op, $node, $next.node);} )?
+			|next=instanceOf) {$node=Nodes.equalityOp($op, $node, $next.node);} )?
 	;
-relational returns [CelNode node=Nodes.blank()]
+relational returns [AstNode node=blank()]
 	:	first=shift {$node=$first.node;}
-		( op=(GE|GT|LT|LE) next=shift {$node=binary(op, $node, $next.node);})?
+		( op=(GE|GT|LT|LE) next=shift {$node=Nodes.relationalOp($op, $node, $next.node);})?
 	;
-instanceOf returns [CelNode node=Nodes.blank()]
+instanceOf returns [AstNode node=blank()]
 	:	val=shift INSTANCEOF type=typeref
 	;
 
-shift returns [CelNode node=Nodes.blank()]
-	:	addition ( (LEFT_SHIFT|RIGHT_SHIFT|URIGHT_SHIFT) addition )*
+shift returns [AstNode node=blank()]
+	:	first=addition {$node=$first.node;}
+		( op=(LEFT_SHIFT|RIGHT_SHIFT|URIGHT_SHIFT) next=addition {$node=Nodes.shiftOp($op, $node, $next.node);})*
 	;
 
-addition:	multiplication ( (ADD|SUB) multiplication )*
+addition returns [AstNode node=blank()]
+	:	first=multiplication {$node=$first.node;}
+		( op=(ADD|SUB) next=multiplication {$node=Nodes.arithmeticOp($op, $node, $next.node);} )*
 	;
-multiplication
-	:	unary ( (MUL|DIV|MOD) unary )*
+multiplication returns [AstNode node=blank()]
+	:	first=unary {$node=$first.node;}
+		( op=(MUL|DIV|MOD) next=unary {$node=Nodes.arithmeticOp($op, $node, $next.node);} )*
 	;
 	
-unary	:	add=ADD unary
-	|	sub=SUB unary
-	|	unaryNoPosNeg
+unary returns [AstNode node=blank()]
+	:	ADD pos=unary {$node=Nodes.unaryOp($ADD, $pos.node);}
+	|	SUB neg=unary {$node=Nodes.unaryOp($SUB, $neg.node);}
+	|	unaryNoPosNeg {$node=$unaryNoPosNeg.node;}
 	;
-unaryNoPosNeg
-	:	BITWISE_NOT unary
-	|	LOGICAL_NOT unary
+unaryNoPosNeg returns [AstNode node=blank()]
+	:	BITWISE_NOT bnot=unary {$node=Nodes.unaryOp($BITWISE_NOT, $bnot.node);}
+	|	LOGICAL_NOT lnot=unary {$node=Nodes.unaryOp($LOGICAL_NOT, $lnot.node);}
 	|	cast
-	|	factor selector*
+	|	factor postfix*
 	;
 cast	:	paren=PAREN_OPEN primitiveType PAREN_CLOSE unary
 	|	paren=PAREN_OPEN typeref PAREN_CLOSE unaryNoPosNeg
 	;
 
-selector:	ACCESS member=ID
+postfix:	ACCESS member=ID
 	|	ACCESS method=ID PAREN_OPEN argList? PAREN_CLOSE
 	|	index=INDEX_OPEN expression INDEX_CLOSE
 	;
@@ -265,7 +237,7 @@ function:	OLD PAREN_OPEN expression PAREN_CLOSE
 	|	paramFunction
 	|	RESULT PAREN_OPEN PAREN_CLOSE
 	|	EQUALS PAREN_OPEN expression COMMA expression PAREN_CLOSE
-	|	EACH PAREN_OPEN ID COLON expression LAMBDA topLevelExpression PAREN_CLOSE
+	|	EACH PAREN_OPEN ID COLON expression LAMBDA ifExpression PAREN_CLOSE
 	|	REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE
 	;
 paramFunction

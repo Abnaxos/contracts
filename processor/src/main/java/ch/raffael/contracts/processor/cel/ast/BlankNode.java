@@ -15,12 +15,17 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
+
+
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class BlankNode extends CelNode {
+public final class BlankNode extends AstNode {
 
-    BlankNode() {
+    BlankNode(@NotNull Position position) {
+        super(position);
     }
 
 }

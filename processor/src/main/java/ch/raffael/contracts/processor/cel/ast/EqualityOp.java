@@ -17,37 +17,49 @@ package ch.raffael.contracts.processor.cel.ast;
 
 import com.google.common.base.Objects;
 
+import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
+
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Template extends AstNode {
+public final class EqualityOp extends BinaryOp {
 
-    Template() {
-        super(position);
+    private final Kind kind;
+
+    EqualityOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        super(position, left, right);
+        this.kind = kind;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        // FIXME: Not implemented
+        toString.addValue(kind);
         super.toString(toString);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ( !super.equals(obj) ) {
+        if ( super.equals(obj) ) {
+            return ((EqualityOp)obj).kind == kind;
+        }
+        else {
             return false;
         }
-        Template that = (Template)obj;
-        // FIXME: Not implemented
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        // FIXME: Not implemented
-        return hash;
+        return appendHash(super.hashCode(), kind);
+    }
+
+    public Kind getKind() {
+        return kind;
+    }
+
+    public static enum Kind {
+        EQUAL, NOT_EQUAL
     }
 
 }

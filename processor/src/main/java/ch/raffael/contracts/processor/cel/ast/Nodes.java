@@ -15,7 +15,14 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+import org.antlr.runtime.Token;
+
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.CelLexer;
+import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
@@ -25,103 +32,169 @@ import ch.raffael.contracts.NotNull;
  */
 public final class Nodes {
 
+    private static final Map<Integer, LogicalOp.Kind> LOGICAL_MAP = ttmap(
+            CelLexer.LOGICAL_OR, LogicalOp.Kind.OR,
+            CelLexer.LOGICAL_AND, LogicalOp.Kind.AND);
+    private static final Map<Integer, BitwiseOp.Kind> BITWISE_MAP = ttmap(
+            CelLexer.BITWISE_OR, BitwiseOp.Kind.OR,
+            CelLexer.BITWISE_XOR, BitwiseOp.Kind.XOR,
+            CelLexer.BITWISE_AND, BitwiseOp.Kind.AND);
+    private static final Map<Integer, EqualityOp.Kind> EQUALITY_MAP = ttmap(
+            CelLexer.EQ, EqualityOp.Kind.EQUAL,
+            CelLexer.NE, EqualityOp.Kind.NOT_EQUAL);
+    private static final Map<Integer, RelationalOp.Kind> RELATIONAL_MAP = ttmap(
+            CelLexer.GT, RelationalOp.Kind.GREATER_THAN,
+            CelLexer.GE, RelationalOp.Kind.GREATER_OR_EQUAL,
+            CelLexer.LT, RelationalOp.Kind.LESS_THAN,
+            CelLexer.LE, RelationalOp.Kind.LESS_OR_EQUAL);
+    private static final Map<Integer, ShiftOp.Kind> SHIFT_MAP = ttmap(
+            CelLexer.GT, ShiftOp.Kind.LEFT,
+            CelLexer.GE, ShiftOp.Kind.RIGHT,
+            CelLexer.LE, ShiftOp.Kind.UNSIGNED_RIGHT);
+    private static final Map<Integer, ArithmeticOp.Kind> ARITHMETIC_MAP = ttmap(
+            CelLexer.GT, ArithmeticOp.Kind.ADD,
+            CelLexer.GE, ArithmeticOp.Kind.SUB,
+            CelLexer.GE, ArithmeticOp.Kind.MUL,
+            CelLexer.GE, ArithmeticOp.Kind.DIV,
+            CelLexer.LE, ArithmeticOp.Kind.MOD);
+    private static final Map<Integer, UnaryOp.Kind> UNARY_MAP = ttmap(
+            CelLexer.GT, UnaryOp.Kind.POS,
+            CelLexer.GE, UnaryOp.Kind.NEG,
+            CelLexer.GE, UnaryOp.Kind.BITWISE_NOT,
+            CelLexer.GE, UnaryOp.Kind.LOGICAL_NOT);
+
     private Nodes() {
     }
 
-    @NotNull
-    public static BlankNode blank() {
-        return new BlankNode();
+    @SuppressWarnings("unchecked")
+    private final static <Integer, T extends Enum> Map<Integer, T> ttmap(Object... map) {
+        ImmutableMap.Builder<Integer, T> builder = ImmutableMap.builder();
+        for ( int i = 0; i < map.length; i += 2 ) {
+            builder.put((Integer)map[i], (T)map[i + 1]);
+        }
+        return builder.build();
+    }
+
+    private final static <T extends Enum> T kind(Map<Integer, T> map, Token tok) {
+        T kind = map.get(tok.getType());
+        if ( kind == null ) {
+            throw new IllegalArgumentException("Cannot map token " + tok + " to kind");
+        }
+        return kind;
     }
 
     @NotNull
-    public static Assertion assertion() {
-        return new Assertion();
+    private static Position pos(@NotNull Token tok) {
+        return new Position(tok.getLine(), tok.getCharPositionInLine());
     }
 
     @NotNull
-    public static Conditional conditional(@NotNull CelNode condition, @NotNull CelNode onTrue, @NotNull CelNode onFalse) {
-        return new Conditional(condition, onTrue, onFalse);
+    public static BlankNode blank(@NotNull Position pos) {
+        return new BlankNode(pos);
     }
 
     @NotNull
-    public static LogicalOr logicalOr(@NotNull CelNode left, @NotNull CelNode right) {
-        return new LogicalOr(left, right);
+    public static BlankNode blank(@NotNull Token tok) {
+        return blank(pos(tok));
     }
 
     @NotNull
-    public static LogicalAnd logicalAnd(@NotNull CelNode left, @NotNull CelNode right) {
-        return new LogicalAnd(left, right);
+    public static Assertion assertion(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
+        return new Assertion(pos, expression, isFinally);
     }
 
     @NotNull
-    public static BitwiseOr bitwiseOr(@NotNull CelNode left, @NotNull CelNode right) {
-        return new BitwiseOr(left, right);
+    public static Assertion assertion(Token tok, @NotNull AstNode expression, boolean isFinally) {
+        return new Assertion(pos(tok), expression, isFinally);
     }
 
     @NotNull
-    public static BitwiseXor bitwiseXor(@NotNull CelNode left, @NotNull CelNode right) {
-        return new BitwiseXor(left, right);
+    public static IfExpression ifExpression(@NotNull Position pos, @NotNull AstNode condition, @NotNull AstNode expression) {
+        return new IfExpression(pos, condition, expression);
     }
 
     @NotNull
-    public static BitwiseAnd bitwiseAnd(@NotNull CelNode left, @NotNull CelNode right) {
-        return new BitwiseAnd(left, right);
+    public static IfExpression ifExpression(@NotNull Token tok, @NotNull AstNode condition, @NotNull AstNode expression) {
+        return new IfExpression(pos(tok), condition, expression);
     }
 
-    public static Equal equal(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Equal(left, right);
+    @NotNull
+    public static ConditionalOp conditionalOp(@NotNull Position pos, @NotNull AstNode condition, @NotNull AstNode onTrue, @NotNull AstNode onFalse) {
+        return new ConditionalOp(pos, condition, onTrue, onFalse);
     }
 
-    public static NotEqual notEqual(@NotNull CelNode left, @NotNull CelNode right) {
-        return new NotEqual(left, right);
+    @NotNull
+    public static ConditionalOp conditionalOp(@NotNull Token tok, @NotNull AstNode condition, @NotNull AstNode onTrue, @NotNull AstNode onFalse) {
+        return new ConditionalOp(pos(tok), condition, onTrue, onFalse);
     }
 
-    public static GreaterThan greaterThan(@NotNull CelNode left, @NotNull CelNode right) {
-        return new GreaterThan(left, right);
+    @NotNull
+    public static LogicalOp logicalOp(@NotNull Position pos, @NotNull LogicalOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new LogicalOp(pos, kind, left, right);
     }
 
-    public static GreaterOrEqual greaterOrEqual(@NotNull CelNode left, @NotNull CelNode right) {
-        return new GreaterOrEqual(left, right);
+    @NotNull
+    public static LogicalOp logicalOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new LogicalOp(pos(tok), kind(LOGICAL_MAP, tok), left, right);
     }
 
-    public static LessThan lessThan(@NotNull CelNode left, @NotNull CelNode right) {
-        return new LessThan(left, right);
+    @NotNull
+    public static BitwiseOp bitwiseOp(@NotNull Position pos, @NotNull BitwiseOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new BitwiseOp(pos, kind, left, right);
     }
 
-    public static LessOrEqual lessOrEqual(@NotNull CelNode left, @NotNull CelNode right) {
-        return new LessOrEqual(left, right);
+    @NotNull
+    public static BitwiseOp bitwiseOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new BitwiseOp(pos(tok), kind(BITWISE_MAP, tok), left, right);
     }
 
-    public static LeftShift leftShift(@NotNull CelNode left, @NotNull CelNode right) {
-        return new LeftShift(left, right);
+    @NotNull
+    public static EqualityOp equalityOp(@NotNull Position pos, @NotNull EqualityOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new EqualityOp(pos, kind, left, right);
     }
 
-    public static RightShift rightShift(@NotNull CelNode left, @NotNull CelNode right) {
-        return new RightShift(left, right);
+    @NotNull
+    public static EqualityOp equalityOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new EqualityOp(pos(tok), kind(EQUALITY_MAP, tok), left, right);
     }
 
-    public static UnsignedRightShift unsignedRightShift(@NotNull CelNode left, @NotNull CelNode right) {
-        return new UnsignedRightShift(left, right);
+    @NotNull
+    public static RelationalOp relationalOp(@NotNull Position pos, @NotNull RelationalOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new RelationalOp(pos, kind, left, right);
     }
 
-    public static Addition addition(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Addition(left, right);
+    @NotNull
+    public static RelationalOp relationalOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new RelationalOp(pos(tok), kind(RELATIONAL_MAP, tok), left, right);
     }
 
-    public static Substraction substraction(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Substraction(left, right);
+    @NotNull
+    public static ShiftOp shiftOp(@NotNull Position pos, @NotNull ShiftOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new ShiftOp(pos, kind, left, right);
     }
 
-    public static Multiplication multiplication(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Multiplication(left, right);
+    @NotNull
+    public static ShiftOp shiftOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new ShiftOp(pos(tok), kind(SHIFT_MAP, tok), left, right);
     }
 
-    public static Division division(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Division(left, right);
+    @NotNull
+    public static ArithmeticOp arithmeticOp(@NotNull Position pos, @NotNull ArithmeticOp.Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        return new ArithmeticOp(pos, kind, left, right);
     }
 
-    public static Modulo modulo(@NotNull CelNode left, @NotNull CelNode right) {
-        return new Modulo(left, right);
+    @NotNull
+    public static ArithmeticOp arithmeticOp(@NotNull Token tok, @NotNull AstNode left, @NotNull AstNode right) {
+        return new ArithmeticOp(pos(tok), kind(ARITHMETIC_MAP, tok), left, right);
     }
 
+    @NotNull
+    public static UnaryOp unaryOp(@NotNull Position pos, @NotNull UnaryOp.Kind kind, @NotNull AstNode expression) {
+        return new UnaryOp(pos, kind, expression);
+    }
+
+    @NotNull
+    public static UnaryOp unaryOp(@NotNull Token tok, @NotNull AstNode expression) {
+        return new UnaryOp(pos(tok), kind(UNARY_MAP, tok), expression);
+    }
 }

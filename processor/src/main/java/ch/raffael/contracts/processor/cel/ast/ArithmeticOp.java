@@ -18,61 +18,48 @@ package ch.raffael.contracts.processor.cel.ast;
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Conditional extends CelNode {
+public final class ArithmeticOp extends BinaryOp {
 
-    private final CelNode condition;
-    private final CelNode onTrue;
-    private final CelNode onFalse;
+    private final Kind kind;
 
-    Conditional(@NotNull CelNode condition, @NotNull CelNode onTrue, @NotNull CelNode onFalse) {
-        this.condition = condition;
-        this.onTrue = onTrue;
-        this.onFalse = onFalse;
+    ArithmeticOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
+        super(position, left, right);
+        this.kind = kind;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        // FIXME: Not implemented
+        toString.addValue(kind);
         super.toString(toString);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ( !super.equals(obj) ) {
+        if ( super.equals(obj) ) {
+            return ((ArithmeticOp)obj).kind == kind;
+        }
+        else {
             return false;
         }
-        Conditional that = (Conditional)obj;
-        return condition.equals(that.condition)
-                && (onTrue.equals(that.onTrue)
-                && onFalse.equals(that.onFalse));
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = appendHash(hash, condition);
-        hash = appendHash(hash, onTrue);
-        hash = appendHash(hash, onFalse);
-        return hash;
+        return appendHash(super.hashCode(), kind);
     }
 
-    @NotNull
-    public CelNode getCondition() {
-        return condition;
+    public Kind getKind() {
+        return kind;
     }
 
-    @NotNull
-    public CelNode getOnTrue() {
-        return onTrue;
+    public static enum Kind {
+        ADD, SUB, MUL, DIV, MOD
     }
 
-    @NotNull
-    public CelNode getOnFalse() {
-        return onFalse;
-    }
 }

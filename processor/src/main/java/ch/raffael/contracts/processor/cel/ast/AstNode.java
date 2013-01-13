@@ -21,10 +21,9 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 
-import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.CelError;
-import ch.raffael.contracts.processor.cel.Location;
+import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.util.common.collections.USet;
 
 import static com.google.common.base.Preconditions.*;
@@ -33,14 +32,15 @@ import static com.google.common.base.Preconditions.*;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public abstract class CelNode {
+public abstract class AstNode {
 
-    private CelNode parent;
+    private AstNode parent;
 
-    private Location location;
+    private final Position position;
     private USet<CelError> errors = new USet(new LinkedHashSet<>());
 
-    CelNode() {
+    AstNode(Position position) {
+        this.position = position;
     }
 
     @Override
@@ -61,7 +61,7 @@ public abstract class CelNode {
         if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        CelNode that = (CelNode)o;
+        AstNode that = (AstNode)o;
         return eq(parent, that.parent);
     }
 
@@ -91,17 +91,12 @@ public abstract class CelNode {
         return 31 * hash + (aBoolean ? 1 : 0);
     }
 
-    public CelNode getParent() {
+    public AstNode getParent() {
         return parent;
     }
 
-    @NotNull
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(@NotNull Location location) {
-        this.location = location;
+    public Position getPosition() {
+        return position;
     }
 
     public boolean hasErrors() {
@@ -116,14 +111,14 @@ public abstract class CelNode {
         errors.add(error);
     }
 
-    protected <T extends CelNode> T child(T child) {
-        CelNode c = child; // private access won't work with child.parent
+    protected <T extends AstNode> T child(T child) {
+        AstNode c = child; // private access won't work with child.parent
         checkState(c.parent == null, "Child already has a parent");
         c.parent = this;
         return child;
     }
 
-    protected <N extends CelNode, C extends Collection<N>> C children(C children) {
+    protected <N extends AstNode, C extends Collection<N>> C children(C children) {
         for ( N child : children ) {
             child(child);
         }

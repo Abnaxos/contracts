@@ -15,28 +15,30 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.common.base.Objects;
+
+import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Assertion extends CelNode {
+public final class Assertion extends AstNode {
 
-    private boolean isFinally = false;
-    private final List<CelNode> ifs = new LinkedList<>();
-    private CelNode expression;
+    private final boolean isFinally;
+    private final AstNode expression;
 
-    Assertion() {
+    Assertion(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
+        super(pos);
+        this.expression = expression;
+        this.isFinally = isFinally;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
         toString.add("finally", isFinally);
+        toString.addValue(expression);
     }
 
     @Override
@@ -46,7 +48,6 @@ public final class Assertion extends CelNode {
         }
         Assertion that = (Assertion)obj;
         return isFinally == that.isFinally
-                && ifs.equals(that.ifs)
                 && expression.equals(that.expression);
     }
 
@@ -54,7 +55,6 @@ public final class Assertion extends CelNode {
     public int hashCode() {
         int hash = super.hashCode();
         hash = appendHash(hash, isFinally);
-        hash = appendHash(hash, ifs);
         hash = appendHash(hash, expression);
         return hash;
     }
@@ -63,25 +63,7 @@ public final class Assertion extends CelNode {
         return isFinally;
     }
 
-    public void setFinally(boolean isFinally) {
-        this.isFinally = isFinally;
-    }
-
-    public Assertion expression(CelNode expression) {
-        this.expression = child(expression);
-        return this;
-    }
-
-    public Assertion ifs(Collection<CelNode> expressions) {
-        ifs.addAll(children(expressions));
-        return this;
-    }
-
-    public CelNode getExpression() {
+    public AstNode getExpression() {
         return expression;
-    }
-
-    public List<CelNode> getIfs() {
-        return ifs;
     }
 }

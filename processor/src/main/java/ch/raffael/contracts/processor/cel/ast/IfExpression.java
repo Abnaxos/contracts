@@ -17,37 +17,51 @@ package ch.raffael.contracts.processor.cel.ast;
 
 import com.google.common.base.Objects;
 
+import ch.raffael.contracts.processor.cel.Position;
+
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Template extends AstNode {
+public final class IfExpression extends AstNode {
 
-    Template() {
+    private final AstNode condition;
+    private final AstNode expression;
+
+    IfExpression(Position position, AstNode condition, AstNode expression) {
         super(position);
+        this.condition = condition;
+        this.expression = expression;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        // FIXME: Not implemented
         super.toString(toString);
+        toString.add("condition", condition).addValue(expression);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if ( !super.equals(obj) ) {
+    public boolean equals(Object o) {
+        if ( super.equals(o) ) {
+            IfExpression that = (IfExpression)o;
+            return this.condition.equals(that.condition)
+                    && this.expression.equals(that.expression);
+        }
+        else {
             return false;
         }
-        Template that = (Template)obj;
-        // FIXME: Not implemented
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        // FIXME: Not implemented
-        return hash;
+        return appendHash(appendHash(super.hashCode(), this.condition), this.expression);
     }
 
+    public AstNode getCondition() {
+        return condition;
+    }
+
+    public AstNode getExpression() {
+        return expression;
+    }
 }

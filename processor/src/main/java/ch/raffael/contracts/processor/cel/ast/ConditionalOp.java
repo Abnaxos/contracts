@@ -17,14 +17,24 @@ package ch.raffael.contracts.processor.cel.ast;
 
 import com.google.common.base.Objects;
 
+import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.processor.cel.Position;
+
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Template extends AstNode {
+public final class ConditionalOp extends AstNode {
 
-    Template() {
+    private final AstNode condition;
+    private final AstNode onTrue;
+    private final AstNode onFalse;
+
+    ConditionalOp(@NotNull Position position, @NotNull AstNode condition, @NotNull AstNode onTrue, @NotNull AstNode onFalse) {
         super(position);
+        this.condition = condition;
+        this.onTrue = onTrue;
+        this.onFalse = onFalse;
     }
 
     @Override
@@ -38,16 +48,33 @@ public final class Template extends AstNode {
         if ( !super.equals(obj) ) {
             return false;
         }
-        Template that = (Template)obj;
-        // FIXME: Not implemented
-        return true;
+        ConditionalOp that = (ConditionalOp)obj;
+        return condition.equals(that.condition)
+                && (onTrue.equals(that.onTrue)
+                && onFalse.equals(that.onFalse));
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        // FIXME: Not implemented
+        hash = appendHash(hash, condition);
+        hash = appendHash(hash, onTrue);
+        hash = appendHash(hash, onFalse);
         return hash;
     }
 
+    @NotNull
+    public AstNode getCondition() {
+        return condition;
+    }
+
+    @NotNull
+    public AstNode getOnTrue() {
+        return onTrue;
+    }
+
+    @NotNull
+    public AstNode getOnFalse() {
+        return onFalse;
+    }
 }
