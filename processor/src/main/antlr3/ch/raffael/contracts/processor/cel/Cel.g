@@ -107,16 +107,6 @@ package ch.raffael.contracts.processor.cel;
 
 @members {
 
-	private Assertion assertion;
-	
-	public void init(Assertion assertion) {
-		this.assertion = assertion;
-	}
-	
-	public Assertion getAssertion() {
-		return assertion;
-	}
-
 	BlankNode blank() {
 		return Nodes.blank(input.LT(1));
 	}

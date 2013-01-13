@@ -23,7 +23,6 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
 import ch.raffael.contracts.processor.cel.ast.Assertion;
-import ch.raffael.contracts.processor.cel.ast.Nodes;
 
 
 /**
@@ -54,7 +53,6 @@ public class Compiler {
                 addANTLRError(e, getErrorMessage(e, tokenNames));
             }
         };
-        parser.init(Nodes.assertion());
         try {
             parser.assertion();
         }

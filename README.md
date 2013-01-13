@@ -12,6 +12,12 @@ This projects aims to add design-by-contract capabilities to Java. It consists o
 
 * A runtime Java agent that deploys the contract at runtime (if enabled).
 
-For details, see the [full Documentation](http://projects.raffael.ch/contracts).
+For details, see the [full Documentation](http://projects.raffael.ch/contracts) (overview page).
+
+Some more documentation pointers:
+
+* [All contract annotations](http://projects.raffael.ch/contracts/ch/raffael/contracts/package-summary.html)
+* [Some details about the internal architecture](http://projects.raffael.ch/contracts/ch/raffael/contracts/processor/package-summary.html)
+* [Referencing parameters by name from Cel expressions](http://projects.raffael.ch/contracts/ch/raffael/contracts/processor/pmap/ParameterMapAnnotationProcessor.html)
 
 This project is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)

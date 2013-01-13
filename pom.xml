@@ -173,6 +173,7 @@
           <doctitle>ch.raffael.contracts ${project.version} Documentation</doctitle>
           <windowtitle>ch.raffael.contracts ${project.version} Documentation</windowtitle>
 
+          <excludePackageNames>ch.raffael.contracts.test*:ch.raffael.contracts.processor.maven:ch.raffael.contracts.processor.ant</excludePackageNames>
           <groups>
             <group>
               <title>API</title>
