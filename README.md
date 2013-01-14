@@ -1,9 +1,9 @@
 ch.raffael.contracts
 ====================
 
-[Design-by-contract](http://en.wikipedia.org/wiki/Design_by_contract) for Java.
+[Contracts](http://en.wikipedia.org/wiki/Design_by_contract) for Java.
 
-This projects aims to add design-by-contract capabilities to Java. It consists of 3 parts:
+This projects aims to add contracts to Java, as seen in the [Eiffel](http://en.wikipedia.org/wiki/Eiffel_%28programming_language%29) language. It consists of 3 parts:
 
 * Java annotations to annotate classes and methods with contracts using a
   the Cel (Contract Expression Language).

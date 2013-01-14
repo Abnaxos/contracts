@@ -19,7 +19,7 @@
 </head>
 <body>
 
-<p>Design-by-contract for Java. This project provides a set of annotations that add
+<p>Contracts for Java. This project provides a set of annotations that add
 contracts to Java classes. Annotations define the contracts, a compile-time processor
 prepares their deployment and a runtime Java agent (optionally) activates them at
 runtime</p>
@@ -74,6 +74,25 @@ runtime</p>
 
 <p>On the other side, there are a few extensions to Java expressions described
     below.</p>
+
+
+<h3>String and character literals</h3>
+
+<p>Contract expressions are embedded in the Java code as annotations. This means that
+whenever you're writing a string literal, you'd have to escape the quotes:</p>
+
+<pre>{@literal @Require("foo.startsWith(\"bar\")")}
+{@literal @Ensure("result().startsWith(\"\\\"\")") // ouch!}</pre>
+
+<p>To work around this issue, Cel also supports singe quotes for string literals:</p>
+
+<pre>{@literal @Require("foo.startsWith('bar')")}
+{@literal @Ensure("result().startsWith('\"')")}</pre>
+
+This, however, conflicts with char literals, which is why Cel introduces a new syntax
+for them. Use single quotes as usual, but append a 'c' (case-insensitive):
+
+<pre>{@literal @Require("foo=='X'c")}</pre>
 
 
 <h3>Conditional conditions ;)</h3>

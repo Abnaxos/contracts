@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.regex.Pattern;
 
 import javax.annotation.Syntax;
 
@@ -27,16 +28,19 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
+ * <p>The parameter or return value must match a regular expression. Only applicable
+ * to {@link CharSequence}.</p>
+ *
+ * @see Pattern
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Documented
 @Target({ ElementType.METHOD, ElementType.PARAMETER })
-@Retention(RetentionPolicy.RUNTIME)
-
+@Retention(RetentionPolicy.CLASS)
 @Equivalent(
         asEnsure = "@regex(pattern(), flags()).matches(@result())",
-        onParameter = "@regex(pattern(), flags()).matches(@param())"
-)
+        onParameter = "@regex(pattern(), flags()).matches(@param())")
 public @interface Matches {
 
     @Syntax("Regex") String pattern();

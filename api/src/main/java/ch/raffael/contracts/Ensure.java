@@ -25,6 +25,11 @@ import javax.annotation.Syntax;
 
 
 /**
+ * <p>Ensure that a <em>postcondition</em> is <code>true</code> on method exit.</p>
+ *
+ * <p><strong>Inheritance</strong>: Precondition contracts may be weakened by subclasses,
+ * but not strengthened. Inherited preconditions will be <em>AND</em>-associated.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target({ ElementType.METHOD, ElementType.CONSTRUCTOR })
@@ -32,7 +37,6 @@ import javax.annotation.Syntax;
 @Documented
 public @interface Ensure {
 
-    @Syntax("Cel")
-    String[] value();
+    @Syntax("Cel") String[] value();
 
 }

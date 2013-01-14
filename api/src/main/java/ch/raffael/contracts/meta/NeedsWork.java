@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts;
+package ch.raffael.contracts.meta;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 
 /**
- * Short for {@link Named @Named}.
- *
- * @see Named
+ * Indicates that an element is incomplete and needs some work.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Deprecated
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.CLASS)
-public @interface N {
+@Retention(RetentionPolicy.SOURCE)
+public @interface NeedsWork {
 
-    String value();
+    String description();
+
+    String[] seeAlso() default {};
 
 }

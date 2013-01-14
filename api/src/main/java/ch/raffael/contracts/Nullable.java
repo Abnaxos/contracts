@@ -20,12 +20,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import ch.raffael.contracts.meta.Equivalent;
+
 
 /**
+ * <p>The parameter or return value may be <code>null</code>. This is actually a
+ * pseudo-contract (obviously), it just documents that fact.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target({ ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.CLASS)
+@Equivalent(
+        asEnsure = "true // @result()==null || @result()!=null",
+        onParameter = "true // @param()==null || @param()!=null")
 public @interface Nullable {
 
 }

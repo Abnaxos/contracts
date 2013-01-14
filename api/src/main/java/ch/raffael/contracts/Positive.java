@@ -25,16 +25,16 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
+ * <p>The parameter or return value be greater than 0.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Documented
-@Target({ ElementType.METHOD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-
+@Target({ ElementType.METHOD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.CLASS)
 @Equivalent(
         asEnsure = "@result() > 0",
-        onParameter = "@param() > 0"
-)
+        onParameter = "@param() > 0")
 public @interface Positive {
 
 }

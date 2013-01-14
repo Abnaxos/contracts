@@ -39,11 +39,9 @@ import ch.raffael.contracts.meta.Permanent;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-
 @Permanent
 public @interface Synchronized {
 
-    @Syntax("Cel")
-    String value() default "this";
+    @Syntax("Cel") String value() default "this";
 
 }

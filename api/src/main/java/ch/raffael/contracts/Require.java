@@ -25,6 +25,11 @@ import javax.annotation.Syntax;
 
 
 /**
+ * <p>Require that a <em>precodition</em> is true on method entry.</p>
+ *
+ * <p><strong>Inheritance</strong>: Extending classes may weaken preconditions, but not
+ * strengthen them. Inherited preconditions will be <em>OR</em>-associated.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target({ ElementType.METHOD, ElementType.PARAMETER })
@@ -32,7 +37,6 @@ import javax.annotation.Syntax;
 @Documented
 public @interface Require {
 
-    @Syntax("Cel")
-    String[] value();
+    @Syntax("Cel") String[] value();
 
 }

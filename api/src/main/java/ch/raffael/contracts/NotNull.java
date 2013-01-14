@@ -25,16 +25,16 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
+ * <p>The parameter or return value must not be <code>null</code>.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Documented
 @Target({ ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.CLASS)
-
 @Equivalent(
         asEnsure = "@result() != null",
-        onParameter = "@param() != null"
-)
+        onParameter = "@param() != null")
 public @interface NotNull {
 
 }

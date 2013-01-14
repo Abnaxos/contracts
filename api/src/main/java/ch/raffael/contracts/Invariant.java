@@ -23,16 +23,28 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Syntax;
 
+import ch.raffael.contracts.meta.NeedsWork;
+
 
 /**
+ * <p>Define a contract that must be <code>true</code> at all times.</p>
+ *
+ * <p>Invariants will be checked both on method entry and method exit. <strike>They apply
+ * to public non-static methods only, as only these are considered the public interface
+ * of an object</strike> (not sure about that).</p>
+ *
+ * <p><strong>Inheritance</strong>: Invariant contracts may be weakened by extending
+ * classes, but not strengthened. Inherited contracts will be <em>AND</em>-associated.</p>
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)
 @Documented
+@NeedsWork(description = "Specify when exactly this applies: public only?",
+           seeAlso = "JavaDoc")
 public @interface Invariant {
 
-    @Syntax("Cel")
-    String[] value();
+    @Syntax("Cel") String[] value();
 
 }

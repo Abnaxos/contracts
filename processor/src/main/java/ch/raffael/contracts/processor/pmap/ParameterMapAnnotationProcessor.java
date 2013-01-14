@@ -46,6 +46,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import ch.raffael.contracts.meta.NeedsWork;
+
 import static ch.raffael.contracts.processor.ContractsProcessor.*;
 import static org.objectweb.asm.Opcodes.*;
 
@@ -94,6 +96,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
+@NeedsWork(description = "This is a quick and dirty proof-of-concept, it may handle error conditions poorly")
 public class ParameterMapAnnotationProcessor extends AbstractProcessor {
 
     @Override

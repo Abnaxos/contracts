@@ -37,7 +37,6 @@ import ch.raffael.contracts.meta.Permanent;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-
 @Permanent
 public @interface Locked {
 

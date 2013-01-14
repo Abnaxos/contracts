@@ -21,16 +21,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import ch.raffael.contracts.meta.Equivalent;
+
 
 /**
- * Deactivates invariant checking for a single method. Such helper methods must be
- * private.
+ * <p>The parameter or return value may be negative. This is actually a pseudo-contract
+ * (obviously), it just documents that fact.</p>
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Documented
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Helper {
+@Target({ ElementType.PARAMETER, ElementType.METHOD })
+@Retention(RetentionPolicy.CLASS)
+@Equivalent(
+        asEnsure = "true // @result()>=0 || @result()<0",
+        onParameter = "true // @param()>=0 || @param()<0")
+public @interface Signed {
 
 }
