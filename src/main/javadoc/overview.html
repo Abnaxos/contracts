@@ -31,19 +31,19 @@ runtime</p>
     <dd><em>Preconditions</em>: Conditions that must be true on method entry. This can
         also be used to check the method parameters. <strong>Inheritance</strong>:
         Inheriting classes may <em>extend</em> the contract, i.e. inherited preconditions
-        will be <em>OR</em>ed.</dd>
+        will be <em>OR</em>-associated.</dd>
 
     <dt style="margin-top:1ex">{@link ch.raffael.contracts.Ensure Ensure}</dt>
     <dd><em>Postconditions</em>: Conditions that must be true on method entry. This can
         also be used to check the method's return value. <strong>Inheritance</strong>:
         Inheriting classes may further <em>constrain</em> the contract, i.e. inherited
-        postconditions will be <em>AND</em>ed.</dd>
+        postconditions will be <em>AND</em>-associated.</dd>
 
     <dt style="margin-top:1ex">{@link ch.raffael.contracts.Invariant Invariant}</dt>
     <dd>Conditions that must be true both on method entry and exit for each method of
         the class. <strong>Inheritance</strong>: Inheriting classes may further
         <em>constrain</em> the contract, i.e. inherited invariants will be
-        <em>AND</em>ed.</dd>
+        <em>AND</em>-associated.</dd>
 </dl>
 
 <p>The conditions are expressed using Cel expressions.</p>
@@ -82,12 +82,12 @@ runtime</p>
 whenever you're writing a string literal, you'd have to escape the quotes:</p>
 
 <pre>{@literal @Require("foo.startsWith(\"bar\")")}
-{@literal @Ensure("result().startsWith(\"\\\"\")") // ouch!}</pre>
+{@literal @Ensure("@result().startsWith(\"\\\"\")") // ouch!}</pre>
 
 <p>To work around this issue, Cel also supports singe quotes for string literals:</p>
 
 <pre>{@literal @Require("foo.startsWith('bar')")}
-{@literal @Ensure("result().startsWith('\"')")}</pre>
+{@literal @Ensure("@result().startsWith('\"')")}</pre>
 
 This, however, conflicts with char literals, which is why Cel introduces a new syntax
 for them. Use single quotes as usual, but append a 'c' (case-insensitive):
@@ -97,12 +97,12 @@ for them. Use single quotes as usual, but append a 'c' (case-insensitive):
 
 <h3>Conditional conditions ;)</h3>
 
-<p>Basically, this is just another way of logical AND and OR. The advantage is that
+<p>Basically, this is just another way of writing logical OR. The advantage is that
     it's more natural and intuitively understandable. An example:</p>
 
 <pre>if ( myObject != null ) myObject.isValid()</pre>
 
-<p>Read: "Of myObject is not null, it must be valid". This is a more readable way of
+<p>Read: "If myObject is not null, it must be valid". This is a more readable way of
     writing:</p>
 
 <pre>myObject == null || myObject.isValid()</pre>

@@ -33,8 +33,8 @@ import ch.raffael.contracts.meta.NeedsWork;
  * to public non-static methods only, as only these are considered the public interface
  * of an object</strike> (not sure about that).</p>
  *
- * <p><strong>Inheritance</strong>: Invariant contracts may be weakened by extending
- * classes, but not strengthened. Inherited contracts will be <em>AND</em>-associated.</p>
+ * <p><strong>Inheritance</strong>: Invariant contracts may be strengthened by extending
+ * classes, but not weakened. Inherited contracts will be <em>AND</em>-associated.</p>
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

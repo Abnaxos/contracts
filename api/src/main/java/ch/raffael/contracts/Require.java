@@ -25,7 +25,7 @@ import javax.annotation.Syntax;
 
 
 /**
- * <p>Require that a <em>precodition</em> is true on method entry.</p>
+ * <p>Require that a <em>precondition</em> is true on method entry.</p>
  *
  * <p><strong>Inheritance</strong>: Extending classes may weaken preconditions, but not
  * strengthen them. Inherited preconditions will be <em>OR</em>-associated.</p>
