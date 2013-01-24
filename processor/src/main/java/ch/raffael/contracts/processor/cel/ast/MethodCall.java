@@ -15,34 +15,43 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class LogicalOp extends BinaryOp {
+public final class MethodCall extends Selector {
 
-    private final Kind kind;
+    private final String methodName;
+    private final List<AstNode> arguments;
 
-    LogicalOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
-        super(position, left, right);
-        this.kind = kind;
+    MethodCall(@NotNull Position position, @Nullable AstNode source, @NotNull String methodName, @NotNull List<AstNode> arguments) {
+        super(position, source);
+        this.methodName = methodName;
+        this.arguments = ImmutableList.copyOf(arguments);
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        toString.addValue(kind);
         super.toString(toString);
+        toString.add("id", methodName);
+        toString.add("args", arguments);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if ( super.equals(obj) ) {
-            return ((LogicalOp)obj).kind == kind;
+    public boolean equals(Object o) {
+        if ( super.equals(o) ) {
+            MethodCall that = (MethodCall)o;
+            return methodName.equals(that.methodName)
+                    && arguments.equals(that.arguments);
         }
         else {
             return false;
@@ -51,7 +60,7 @@ public final class LogicalOp extends BinaryOp {
 
     @Override
     public int hashCode() {
-        return appendHash(super.hashCode(), kind);
+        return appendHash(appendHash(super.hashCode(), methodName), arguments);
     }
 
     @Override
@@ -59,12 +68,13 @@ public final class LogicalOp extends BinaryOp {
         visitor.visit(this);
     }
 
-    public Kind getKind() {
-        return kind;
+    @NotNull
+    public String getMethodName() {
+        return methodName;
     }
 
-    public static enum Kind {
-        OR, AND
+    @NotNull
+    public List<AstNode> getArguments() {
+        return arguments;
     }
-
 }

@@ -18,31 +18,31 @@ package ch.raffael.contracts.processor.cel.ast;
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class LogicalOp extends BinaryOp {
+public abstract class Selector extends AstNode {
 
-    private final Kind kind;
+    private final AstNode source;
 
-    LogicalOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
-        super(position, left, right);
-        this.kind = kind;
+    Selector(@NotNull Position position, @Nullable AstNode source) {
+        super(position);
+        this.source = source;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        toString.addValue(kind);
-        super.toString(toString);
+        toString.add("source", source);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if ( super.equals(obj) ) {
-            return ((LogicalOp)obj).kind == kind;
+    public boolean equals(Object o) {
+        if ( super.equals(o) ) {
+            return eq(source, ((Selector)o).source);
         }
         else {
             return false;
@@ -51,20 +51,11 @@ public final class LogicalOp extends BinaryOp {
 
     @Override
     public int hashCode() {
-        return appendHash(super.hashCode(), kind);
+        return appendHash(super.hashCode(), source);
     }
 
-    @Override
-    protected void doAccept(AstVisitor visitor) {
-        visitor.visit(this);
+    @Nullable
+    public AstNode getSource() {
+        return source;
     }
-
-    public Kind getKind() {
-        return kind;
-    }
-
-    public static enum Kind {
-        OR, AND
-    }
-
 }

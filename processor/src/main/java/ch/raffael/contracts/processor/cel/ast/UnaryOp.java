@@ -56,6 +56,11 @@ public final class UnaryOp extends AstNode {
         return appendHash(appendHash(super.hashCode(), kind), expression);
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public Kind getKind() {
         return kind;
     }

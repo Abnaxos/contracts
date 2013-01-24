@@ -58,6 +58,11 @@ public final class ShiftOp extends BinaryOp {
         return kind;
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public static enum Kind {
         LEFT, RIGHT, UNSIGNED_RIGHT
     }

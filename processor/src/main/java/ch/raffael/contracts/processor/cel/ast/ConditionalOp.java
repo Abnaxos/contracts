@@ -63,6 +63,11 @@ public final class ConditionalOp extends AstNode {
         return hash;
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     @NotNull
     public AstNode getCondition() {
         return condition;

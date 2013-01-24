@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.ast;
+package ch.raffael.contracts.processor.cel.specutil
 
-import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.processor.cel.Position;
+import org.spockframework.runtime.extension.ExtensionAnnotation
 
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class BlankNode extends AstNode {
-
-    BlankNode(@NotNull Position position) {
-        super(position);
-    }
-
-    @Override
-    protected void doAccept(AstVisitor visitor) {
-        visitor.visit(this);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@ExtensionAnnotation(TrackFeatureExtension)
+public @interface TrackFeature {
 
 }

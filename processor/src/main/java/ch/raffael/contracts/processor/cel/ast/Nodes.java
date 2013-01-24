@@ -15,12 +15,14 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import org.antlr.runtime.Token;
 
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.CelLexer;
 import ch.raffael.contracts.processor.cel.Position;
 
@@ -48,20 +50,20 @@ public final class Nodes {
             CelLexer.LT, RelationalOp.Kind.LESS_THAN,
             CelLexer.LE, RelationalOp.Kind.LESS_OR_EQUAL);
     private static final Map<Integer, ShiftOp.Kind> SHIFT_MAP = ttmap(
-            CelLexer.GT, ShiftOp.Kind.LEFT,
-            CelLexer.GE, ShiftOp.Kind.RIGHT,
-            CelLexer.LE, ShiftOp.Kind.UNSIGNED_RIGHT);
+            CelLexer.LEFT_SHIFT, ShiftOp.Kind.LEFT,
+            CelLexer.RIGHT_SHIFT, ShiftOp.Kind.RIGHT,
+            CelLexer.URIGHT_SHIFT, ShiftOp.Kind.UNSIGNED_RIGHT);
     private static final Map<Integer, ArithmeticOp.Kind> ARITHMETIC_MAP = ttmap(
-            CelLexer.GT, ArithmeticOp.Kind.ADD,
-            CelLexer.GE, ArithmeticOp.Kind.SUB,
-            CelLexer.GE, ArithmeticOp.Kind.MUL,
-            CelLexer.GE, ArithmeticOp.Kind.DIV,
-            CelLexer.LE, ArithmeticOp.Kind.MOD);
+            CelLexer.ADD, ArithmeticOp.Kind.ADD,
+            CelLexer.SUB, ArithmeticOp.Kind.SUB,
+            CelLexer.MUL, ArithmeticOp.Kind.MUL,
+            CelLexer.DIV, ArithmeticOp.Kind.DIV,
+            CelLexer.MOD, ArithmeticOp.Kind.MOD);
     private static final Map<Integer, UnaryOp.Kind> UNARY_MAP = ttmap(
-            CelLexer.GT, UnaryOp.Kind.POS,
-            CelLexer.GE, UnaryOp.Kind.NEG,
-            CelLexer.GE, UnaryOp.Kind.BITWISE_NOT,
-            CelLexer.GE, UnaryOp.Kind.LOGICAL_NOT);
+            CelLexer.ADD, UnaryOp.Kind.POS,
+            CelLexer.SUB, UnaryOp.Kind.NEG,
+            CelLexer.BITWISE_NOT, UnaryOp.Kind.BITWISE_NOT,
+            CelLexer.LOGICAL_NOT, UnaryOp.Kind.LOGICAL_NOT);
 
     private Nodes() {
     }
@@ -196,5 +198,55 @@ public final class Nodes {
     @NotNull
     public static UnaryOp unaryOp(@NotNull Token tok, @NotNull AstNode expression) {
         return new UnaryOp(pos(tok), kind(UNARY_MAP, tok), expression);
+    }
+
+    @NotNull
+    public static IdReference idReference(@NotNull Position pos, @Nullable AstNode source, @NotNull String identifier) {
+        return new IdReference(pos, source, identifier);
+    }
+
+    @NotNull
+    public static IdReference idReference(@NotNull Token tok, @Nullable AstNode source, @NotNull String identifier) {
+        return new IdReference(pos(tok), source, identifier);
+    }
+
+    @NotNull
+    public static IdReference idReference(@NotNull Position pos, @NotNull String identifier) {
+        return new IdReference(pos, null, identifier);
+    }
+
+    @NotNull
+    public static IdReference idReference(@NotNull Token tok, @NotNull String identifier) {
+        return new IdReference(pos(tok), null, identifier);
+    }
+
+    @NotNull
+    public static MethodCall methodCall(@NotNull Position pos, @Nullable AstNode source, @NotNull String methodName, @NotNull List<AstNode> arguments) {
+        return new MethodCall(pos, source, methodName, arguments);
+    }
+
+    @NotNull
+    public static MethodCall methodCall(@NotNull Token tok, @Nullable AstNode source, @NotNull String methodName, @NotNull List<AstNode> arguments) {
+        return new MethodCall(pos(tok), source, methodName, arguments);
+    }
+
+    @NotNull
+    public static MethodCall methodCall(@NotNull Position pos, @NotNull String methodName, @NotNull List<AstNode> arguments) {
+        return new MethodCall(pos, null, methodName, arguments);
+    }
+
+    @NotNull
+    public static MethodCall methodCall(@NotNull Token tok, @NotNull String methodName, @NotNull List<AstNode> arguments) {
+        return new MethodCall(pos(tok), null, methodName, arguments);
+    }
+
+    @NotNull
+    public static ArrayAccess arrayAccess(@NotNull Position pos, @NotNull AstNode source, @NotNull AstNode index) {
+        return new ArrayAccess(pos, source, index);
+    }
+
+    @NotNull
+    public static ArrayAccess arrayAccess(@NotNull Token tok, @NotNull AstNode source, @NotNull AstNode index) {
+        return new ArrayAccess(pos(tok), source, index);
     }
 }

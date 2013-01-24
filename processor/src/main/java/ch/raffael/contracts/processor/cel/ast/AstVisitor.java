@@ -15,22 +15,37 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
-import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.processor.cel.Position;
-
-
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class BlankNode extends AstNode {
+public interface AstVisitor {
 
-    BlankNode(@NotNull Position position) {
-        super(position);
-    }
+    void visit(Assertion assertion);
 
-    @Override
-    protected void doAccept(AstVisitor visitor) {
-        visitor.visit(this);
-    }
+    void visit(IfExpression ifExpression);
+
+    void visit(ConditionalOp conditionalOp);
+
+    void visit(LogicalOp logicalOp);
+
+    void visit(BitwiseOp bitwiseOp);
+
+    void visit(EqualityOp equalityOp);
+
+    void visit(RelationalOp relationalOp);
+
+    void visit(ShiftOp shiftOp);
+
+    void visit(ArithmeticOp arithmeticOp);
+
+    void visit(UnaryOp unaryOp);
+
+    void visit(IdReference idReference);
+
+    void visit(MethodCall methodCall);
+
+    void visit(ArrayAccess arrayAccess);
+
+    void visit(BlankNode blankNode);
 
 }

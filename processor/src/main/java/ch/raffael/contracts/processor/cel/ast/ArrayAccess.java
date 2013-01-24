@@ -24,25 +24,25 @@ import ch.raffael.contracts.processor.cel.Position;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class LogicalOp extends BinaryOp {
+public final class ArrayAccess extends Selector {
 
-    private final Kind kind;
+    private final AstNode index;
 
-    LogicalOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
-        super(position, left, right);
-        this.kind = kind;
+    ArrayAccess(@NotNull Position position, @NotNull AstNode source, @NotNull AstNode index) {
+        super(position, source);
+        this.index = index;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        toString.addValue(kind);
         super.toString(toString);
+        toString.add("index", index);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if ( super.equals(obj) ) {
-            return ((LogicalOp)obj).kind == kind;
+    public boolean equals(Object o) {
+        if ( super.equals(o) ) {
+            return index.equals(((ArrayAccess)o).index);
         }
         else {
             return false;
@@ -51,7 +51,7 @@ public final class LogicalOp extends BinaryOp {
 
     @Override
     public int hashCode() {
-        return appendHash(super.hashCode(), kind);
+        return appendHash(super.hashCode(), index);
     }
 
     @Override
@@ -59,12 +59,14 @@ public final class LogicalOp extends BinaryOp {
         visitor.visit(this);
     }
 
-    public Kind getKind() {
-        return kind;
+    @NotNull
+    public AstNode getIndex() {
+        return index;
     }
 
-    public static enum Kind {
-        OR, AND
+    @NotNull
+    @Override
+    public AstNode getSource() {
+        return super.getSource();
     }
-
 }

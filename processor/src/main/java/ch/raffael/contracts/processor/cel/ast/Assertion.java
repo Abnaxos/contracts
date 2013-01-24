@@ -59,6 +59,11 @@ public final class Assertion extends AstNode {
         return hash;
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public boolean isFinally() {
         return isFinally;
     }

@@ -54,6 +54,11 @@ public final class RelationalOp extends BinaryOp {
         return appendHash(super.hashCode(), kind);
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public Kind getKind() {
         return kind;
     }

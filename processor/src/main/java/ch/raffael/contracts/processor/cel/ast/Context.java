@@ -15,22 +15,14 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
-import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.processor.cel.Position;
-
-
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class BlankNode extends AstNode {
+public enum Context {
 
-    BlankNode(@NotNull Position position) {
-        super(position);
-    }
-
-    @Override
-    protected void doAccept(AstVisitor visitor) {
-        visitor.visit(this);
-    }
+    REQUIRE,
+    PARAMETER,
+    ENSURE,
+    INVARIANT;
 
 }

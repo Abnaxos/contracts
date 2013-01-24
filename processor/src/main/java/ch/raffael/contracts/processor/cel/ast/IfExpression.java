@@ -57,6 +57,11 @@ public final class IfExpression extends AstNode {
         return appendHash(appendHash(super.hashCode(), this.condition), this.expression);
     }
 
+    @Override
+    protected void doAccept(AstVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public AstNode getCondition() {
         return condition;
     }

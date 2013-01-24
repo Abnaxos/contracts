@@ -18,31 +18,32 @@ package ch.raffael.contracts.processor.cel.ast;
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
+import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.Position;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class LogicalOp extends BinaryOp {
+public final class IdReference extends Selector {
 
-    private final Kind kind;
+    private final String identifier;
 
-    LogicalOp(@NotNull Position position, @NotNull Kind kind, @NotNull AstNode left, @NotNull AstNode right) {
-        super(position, left, right);
-        this.kind = kind;
+    IdReference(@NotNull Position position, @Nullable AstNode source, @NotNull String identifier) {
+        super(position, source);
+        this.identifier = identifier;
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        toString.addValue(kind);
         super.toString(toString);
+        toString.add("id", identifier);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if ( super.equals(obj) ) {
-            return ((LogicalOp)obj).kind == kind;
+    public boolean equals(Object o) {
+        if ( super.equals(o) ) {
+            return identifier.equals(((IdReference)o).identifier);
         }
         else {
             return false;
@@ -51,7 +52,7 @@ public final class LogicalOp extends BinaryOp {
 
     @Override
     public int hashCode() {
-        return appendHash(super.hashCode(), kind);
+        return appendHash(super.hashCode(), identifier);
     }
 
     @Override
@@ -59,12 +60,8 @@ public final class LogicalOp extends BinaryOp {
         visitor.visit(this);
     }
 
-    public Kind getKind() {
-        return kind;
+    @NotNull
+    public String getIdentifier() {
+        return identifier;
     }
-
-    public static enum Kind {
-        OR, AND
-    }
-
 }

@@ -55,4 +55,12 @@ public abstract class BinaryOp extends AstNode {
     public int hashCode() {
         return appendHash(appendHash(super.hashCode(), left), right);
     }
+
+    public AstNode getLeft() {
+        return left;
+    }
+
+    public AstNode getRight() {
+        return right;
+    }
 }

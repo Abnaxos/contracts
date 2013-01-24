@@ -21,6 +21,8 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 
+import ch.raffael.contracts.Ensure;
+import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.processor.cel.CelError;
 import ch.raffael.contracts.processor.cel.Position;
@@ -46,6 +48,7 @@ public abstract class AstNode {
     @Override
     public String toString() {
         Objects.ToStringHelper toString = Objects.toStringHelper(this);
+        toString.addValue(position);
         toString(toString);
         return toString.toString();
     }
@@ -110,6 +113,15 @@ public abstract class AstNode {
     public void addError(CelError error) {
         errors.add(error);
     }
+
+    @NotNull
+    @Ensure("@result == visitor")
+    public <T extends AstVisitor> T accept(@NotNull T visitor) {
+        doAccept(visitor);
+        return visitor;
+    }
+
+    protected abstract void doAccept(AstVisitor visitor);
 
     protected <T extends AstNode> T child(T child) {
         AstNode c = child; // private access won't work with child.parent

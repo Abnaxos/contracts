@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.ast;
+package ch.raffael.contracts.processor.cel
 
-import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.processor.cel.Position;
-
+import org.antlr.runtime.RecognitionException
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class BlankNode extends AstNode {
+class CelErrorsException extends Exception {
 
-    BlankNode(@NotNull Position position) {
-        super(position);
+    final List<RecognitionException> errors
+
+    CelErrorsException(List<RecognitionException> errors) {
+        super(message(errors))
+        this.errors = errors
     }
 
-    @Override
-    protected void doAccept(AstVisitor visitor) {
-        visitor.visit(this);
+    private static String message(List<RecognitionException> errors) {
+        String msg = "There were Cel errors:"
+        errors.each { e ->
+            msg += "\n${e.toString()}"
+        }
+        return msg
     }
 
 }

@@ -45,7 +45,7 @@ tokens {
 	
 	OLD		= '@old';
 	THROWN		= '@thrown';
-	EQUALS		= '@equals';
+	EQUAL		= '@equals';
 	PARAM		= '@param';
 	ARG		= '@arg';
 	RESULT		= '@result';
@@ -152,7 +152,8 @@ bitwiseXor returns [AstNode node=blank()]
 		( BITWISE_XOR next=bitwiseAnd {$node=Nodes.bitwiseOp($BITWISE_XOR, $node, $next.node);} )*
 	;
 bitwiseAnd returns [AstNode node=blank()]
-	:	equality ( BITWISE_AND equality )*
+	:	first=equality {$node=$first.node;}
+		( BITWISE_AND next=equality {$node=Nodes.bitwiseOp($BITWISE_AND, $node, $next.node);})*
 	;
 
 equality returns [AstNode node=blank()]
@@ -194,59 +195,79 @@ unaryNoPosNeg returns [AstNode node=blank()]
 	:	BITWISE_NOT bnot=unary {$node=Nodes.unaryOp($BITWISE_NOT, $bnot.node);}
 	|	LOGICAL_NOT lnot=unary {$node=Nodes.unaryOp($LOGICAL_NOT, $lnot.node);}
 	|	cast
-	|	factor postfix*
+	|	factor {$node=$factor.node;}
 	;
 cast	:	paren=PAREN_OPEN primitiveType PAREN_CLOSE unary
 	|	paren=PAREN_OPEN typeref PAREN_CLOSE unaryNoPosNeg
 	;
-
-postfix:	ACCESS member=ID
-	|	ACCESS method=ID PAREN_OPEN argList? PAREN_CLOSE
-	|	index=INDEX_OPEN expression INDEX_CLOSE
+	
+factor returns [AstNode node=blank()]
+	:
+	primary {$node=$primary.node;} (selector[$node] {$node=$selector.node;})*
+	;
+primary returns [AstNode node=blank()]
+	: PAREN_OPEN expression PAREN_CLOSE {$node=$expression.node;}
+	| methodCall[null] {$node=$methodCall.node;}
+	| ID {$node=Nodes.idReference($ID, $ID.text);}
+	| literal
+	| functionCall
+	| typeref ACCESS CLASS
+	| classref? ACCESS THIS
+	// typeref, e.g. int.class or int[].class
 	;
 	
-factor	:
-	(	reference
-	|	INT|FLOAT|STRING|CHAR
-	|	TRUE|FALSE|NULL|THIS|SUPER
-	|	( typeref | primitiveType | TVOID ) ACCESS CLASS
-	|	call
-	|	function
-	|	(PAREN_OPEN expression PAREN_CLOSE)
-	);
-reference
-	// A reference to unknown; this is used later to determine how to interpret this:
-	// It could be a local variable, a field, a static field, a package/class
-	// See JLS7 §6.5.2
-	:	id=ID
+selector [AstNode source] returns [AstNode node=blank()]
+	: ACCESS ID {$node=Nodes.idReference($ID, source, $ID.text);}
+	| ACCESS methodCall[source] {$node=$methodCall.node;}
+	| INDEX_OPEN expression INDEX_CLOSE {$node=Nodes.arrayAccess($INDEX_OPEN, source, $expression.node);}
 	;
-call	:	method=ID PAREN_OPEN argList? PAREN_CLOSE;
-
-function:	OLD PAREN_OPEN expression PAREN_CLOSE
-	|	THROWN PAREN_OPEN classref? PAREN_CLOSE
-	|	paramFunction
-	|	RESULT PAREN_OPEN PAREN_CLOSE
-	|	EQUALS PAREN_OPEN expression COMMA expression PAREN_CLOSE
-	|	EACH PAREN_OPEN ID COLON expression LAMBDA ifExpression PAREN_CLOSE
-	|	REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE
+	
+literal returns [AstNode node=blank()]
+	: STRING
+	| CHAR
+	| INT
+	| FLOAT
+	| TRUE
+	| FALSE
+	| NULL
+	;
+	
+methodCall [AstNode source] returns [AstNode node=blank()]
+@init{
+List<AstNode> args = new ArrayList<>();
+}
+	: ID PAREN_OPEN
+	  ( first=expression {args.add($first.node);} (COMMA next=expression {args.add($next.node);})*)?
+	  PAREN_CLOSE {$node=Nodes.methodCall($ID, source, $ID.text, args);}
+	;
+	
+functionCall
+	: OLD PAREN_OPEN expression PAREN_CLOSE
+	| THROWN PAREN_OPEN classref? PAREN_CLOSE
+	| paramFunction
+	| RESULT PAREN_OPEN PAREN_CLOSE
+	| EQUAL PAREN_OPEN expression COMMA expression PAREN_CLOSE
+	| EACH PAREN_OPEN ID COLON expression LAMBDA ifExpression PAREN_CLOSE
+	| REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE
 	;
 paramFunction
 	:	(fun=PARAM|fun=ARG) PAREN_OPEN (((ADD|SUB)? INT) | ID)? PAREN_CLOSE
 	;
-		
-argList	:	expression ( COMMA expression )*
-	;
 
-typeref	:	classref array*
-	|	primitiveType array+
+typeref
+	:
+	( ID (ACCESS ID)*
+	| primitiveType
+	) (INDEX_OPEN INDEX_CLOSE)*
 	;
-classref:	ID classDereference*;
-classDereference
-	:	ACCESS pkgOrCls=ID;
-typerefFragment
-	:	ID
+classref returns [String name=""]
+@init{
+StringBuilder buf = new StringBuilder();
+}
+	: first=ID {buf.append($first.text);}
+	  (ACCESS next=ID {buf.append('.').append($next.text);})*
+	  {name=buf.toString();}
 	;
-array	:	arr=INDEX_OPEN INDEX_CLOSE;
 primitiveType
 	:	TINT | TLONG | TSHORT | TBYTE | TDOUBLE | TFLOAT | TCHAR | TBOOLEAN
 	;
@@ -302,12 +323,11 @@ fragment
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
 
 // whitespaces
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
-        ) {$channel=HIDDEN;}
+WS:	( ' '
+	| '\t'
+	| '\r'
+	| '\n'
+	) {$channel=HIDDEN;}
     ;
-COMMENT
-    :   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
-    ;
+COMMENT: '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
+LINE_COMMENT: '//' ~('\n'|'\r')* { $channel = HIDDEN; };
