@@ -14,9 +14,4 @@ This projects aims to add contracts to Java, as seen in the [Eiffel](http://en.w
 
 For details, see the [full Documentation](http://projects.raffael.ch/contracts). The user's documentation is located in the [package description of ch.raffael.contracts](http://projects.raffael.ch/contracts/ch/raffael/contracts/package-summary.html).
 
-Some more documentation pointers:
-
-* [All contract annotations](http://projects.raffael.ch/contracts/ch/raffael/contracts/package-summary.html)
-* [Some details about the internal architecture](http://projects.raffael.ch/contracts/ch/raffael/contracts/processor/package-summary.html)
-
 This project is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)

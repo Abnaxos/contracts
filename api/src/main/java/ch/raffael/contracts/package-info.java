@@ -49,7 +49,7 @@
  * class they are defined in. Conditions that are defined for a method
  * (Require and Ensure) additionally may access the
  * method parameters (but not local variables). See also the full
- * <a href="ch/raffael/contracts/processor/cel/Cel.g">ANTLR3 grammar</a>.</p>
+ * <a href="processor/cel/Cel.g">ANTLR3 grammar</a>.</p>
  *
  * <p>There are, however, some limitations in these expressions:</p>
  *
