@@ -122,7 +122,7 @@ public class ParameterMapAnnotationProcessor extends AbstractProcessor {
                     ctor.visitEnd();
                     //classWriter.visitOuterClass(toInternalName(className), null, null);
                     AnnotationVisitor parameterMap = classWriter.visitAnnotation(Type.getDescriptor(ParameterMap.class), false);
-                    writeType(parameterMap, typeElem, null, null);
+                    writeType(parameterMap, typeElem, null);
                     parameterMap.visitEnd();
                     classWriter.visitEnd();
                     try ( OutputStream output = contractsFile.openOutputStream() ) {
@@ -137,7 +137,7 @@ public class ParameterMapAnnotationProcessor extends AbstractProcessor {
         return false;
     }
 
-    private void writeType(AnnotationVisitor annotation, TypeElement element, String innerPrefix, AnnotationVisitor innerClassArray) {
+    private void writeType(AnnotationVisitor annotation, TypeElement element, AnnotationVisitor innerClassArray) {
         AnnotationVisitor methodsArray = annotation.visitArray("methods");
         for ( Element elem : element.getEnclosedElements() ) {
             String methodName;
@@ -168,15 +168,8 @@ public class ParameterMapAnnotationProcessor extends AbstractProcessor {
         for ( Element innerElem : element.getEnclosedElements() ) {
             if ( isType(innerElem) ) {
                 AnnotationVisitor innerClass = innerClassArray.visitAnnotation(null, Type.getDescriptor(ParameterMap.InnerClass.class));
-                String name;
-                if ( innerPrefix == null ) {
-                    name = innerElem.getSimpleName().toString();
-                }
-                else {
-                    name = innerPrefix + "." + innerElem.getSimpleName();
-                }
-                innerClass.visit("name", name);
-                writeType(innerClass, (TypeElement)innerElem, name, innerClassArray);
+                innerClass.visit("name", toInternalName(processingEnv.getElementUtils().getBinaryName((TypeElement)innerElem).toString()));
+                writeType(innerClass, (TypeElement)innerElem, innerClassArray);
                 innerClass.visitEnd();
             }
         }

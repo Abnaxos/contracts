@@ -15,6 +15,7 @@
  */
 package ch.raffael.contracts.meta;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -25,6 +26,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Retention(RetentionPolicy.SOURCE)
+@Documented
 public @interface NeedsWork {
 
     String description();

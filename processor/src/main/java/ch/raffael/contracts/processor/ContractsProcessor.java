@@ -15,20 +15,56 @@
  */
 package ch.raffael.contracts.processor;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
+import ch.raffael.contracts.NotNull;
+
+
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class ContractsProcessor {
+public final class ContractsProcessor {
 
     public static final String CONTRACTS_CLASS_SUFFIX = "$$ch$raffael$contracts";
 
     public static final String CTOR_NAME = "<init>";
 
+    private static final BiMap<String, String> BINARY_TO_DESCRIPTOR =
+            ImmutableBiMap.<String, String>builder()
+                    .put("int", "I")
+                    .put("long", "J")
+                    .put("short", "S")
+                    .put("byte", "B")
+                    .put("double", "D")
+                    .put("float", "F")
+                    .put("char", "C")
+                    .put("boolean", "Z")
+                    .put("void", "V")
+                    .build();
+
     private ContractsProcessor() {
     }
 
-    public static String toInternalName(String className) {
-        return className.replace('.', '/');
+    @NotNull
+    public static String toInternalName(@NotNull String binaryName) {
+        return binaryName.replace('.', '/');
+    }
+
+    @NotNull
+    public static String toDescriptor(@NotNull String internalName) {
+        String descriptor = BINARY_TO_DESCRIPTOR.get(internalName);
+        if ( descriptor != null ) {
+            return descriptor;
+        }
+        else {
+            return "L" + internalName + ";";
+        }
+    }
+
+    @NotNull
+    public static String getContractsClassName(@NotNull String binaryName) {
+        return binaryName + CONTRACTS_CLASS_SUFFIX;
     }
 
 }
