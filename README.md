@@ -12,12 +12,11 @@ This projects aims to add contracts to Java, as seen in the [Eiffel](http://en.w
 
 * A runtime Java agent that deploys the contract at runtime (if enabled).
 
-For details, see the [full Documentation](http://projects.raffael.ch/contracts) (overview page).
+For details, see the [full Documentation](http://projects.raffael.ch/contracts). The user's documentation is located in the [package description of ch.raffael.contracts](http://projects.raffael.ch/contracts/ch/raffael/contracts/package-summary.html).
 
 Some more documentation pointers:
 
 * [All contract annotations](http://projects.raffael.ch/contracts/ch/raffael/contracts/package-summary.html)
 * [Some details about the internal architecture](http://projects.raffael.ch/contracts/ch/raffael/contracts/processor/package-summary.html)
-* [Referencing parameters by name from Cel expressions](http://projects.raffael.ch/contracts/ch/raffael/contracts/processor/pmap/ParameterMapAnnotationProcessor.html)
 
 This project is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
