@@ -44,6 +44,8 @@
     <module>maven</module>
     <module>ant</module>
 
+    <module>devtools</module>
+
     <module>test</module>
   </modules>
 
@@ -186,6 +188,10 @@
             <group>
               <title>Contracts Processor</title>
               <packages>ch.raffael.contracts.*</packages>
+            </group>
+            <group>
+              <title>Development/Debugging Tools</title>
+              <packages>ch.raffael.contracts.devtools.*</packages>
             </group>
           </groups>
 

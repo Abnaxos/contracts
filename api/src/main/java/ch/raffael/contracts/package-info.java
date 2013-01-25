@@ -110,10 +110,10 @@
  *
  * <pre>@Ensure("finally a==b")</pre>
  *
- * To check a post-condition only when throwing, use the {@code @throw} function (see
+ * To check a post-condition only when throwing, use the {@code @thrown} function (see
  * below):
  *
- * <pre>@Ensure("finally if(@thrown(Throwable)) a==b</pre>
+ * <pre>@Ensure("finally if(@thrown()) a==b</pre>
  *
  *
  * <h3>Functions</h3>
@@ -137,7 +137,7 @@
  * [Ensure</code>] Refer to the return value of the method.
  * </dd>
  *
- * <dt style="margin-top:1ex"><code>@thrown(&lt;[exception-class]&gt;)</code></dt>
+ * <dt style="margin-top:1ex"><code>@thrown([&lt;exception-class&gt;])</code></dt>
  * <dd>
  * [<code>Ensure, Invariant</code>] Check that
  * an exception has been thrown. If the exception is not specified,
