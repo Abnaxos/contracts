@@ -17,15 +17,19 @@ package ch.raffael.contracts.processor.cel;
 
 import javax.annotation.concurrent.Immutable;
 
+import org.antlr.runtime.Token;
+
 import ch.raffael.contracts.NonNegative;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Positive;
+import ch.raffael.contracts.meta.NeedsWork;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Immutable
+@NeedsWork(description = "There shouldn't be any references to Token from here")
 public final class Position implements Comparable<Position> {
 
     private final int line;
@@ -34,6 +38,10 @@ public final class Position implements Comparable<Position> {
     public Position(@Positive int line, @NonNegative int charInLine) {
         this.line = line;
         this.charInLine = charInLine;
+    }
+
+    public Position(@NotNull Token token) {
+        this(token.getLine(), token.getCharPositionInLine());
     }
 
     @Override

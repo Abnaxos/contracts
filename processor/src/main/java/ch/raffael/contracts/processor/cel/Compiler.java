@@ -23,6 +23,8 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
 import ch.raffael.contracts.processor.cel.ast.Assertion;
+import ch.raffael.contracts.processor.cel.impl.CelLexer;
+import ch.raffael.contracts.processor.cel.impl.CelParser;
 
 
 /**
@@ -63,7 +65,7 @@ public class Compiler {
     }
 
     private void addANTLRError(RecognitionException e, String msg) {
-        errors.add(new CelError(sourceLocation, expression, e.line, e.charPositionInLine, msg));
+        errors.add(new CelError(new Position(e.line, e.charPositionInLine), msg));
     }
 
 }

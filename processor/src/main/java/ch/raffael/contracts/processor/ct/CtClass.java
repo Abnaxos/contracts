@@ -13,41 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.ast;
+package ch.raffael.contracts.processor.ct;
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public interface AstVisitor {
+public class CtClass {
 
-    void visit(Assertion assertion);
-
-    void visit(IfExpression ifExpression);
-
-    void visit(ConditionalOp conditionalOp);
-
-    void visit(LogicalOp logicalOp);
-
-    void visit(BitwiseOp bitwiseOp);
-
-    void visit(EqualityOp equalityOp);
-
-    void visit(RelationalOp relationalOp);
-
-    void visit(ShiftOp shiftOp);
-
-    void visit(ArithmeticOp arithmeticOp);
-
-    void visit(UnaryOp unaryOp);
-
-    void visit(IdReference idReference);
-
-    void visit(MethodCall methodCall);
-
-    void visit(ArrayAccess arrayAccess);
-
-    void visit(Literal literal);
-
-    void visit(BlankNode blankNode);
+    public static final CtClass BOOLEAN = new CtClass();
+    public static final CtClass BYTE = new CtClass();
+    public static final CtClass SHORT = new CtClass();
+    public static final CtClass INT = new CtClass();
+    public static final CtClass LONG = new CtClass();
+    public static final CtClass CHAR = new CtClass();
+    public static final CtClass FLOAT = new CtClass();
+    public static final CtClass DOUBLE = new CtClass();
+    public static final CtClass VOID = new CtClass();
+    public static final CtClass OBJECT = new CtClass();
+    public static final CtClass STRING = new CtClass();
 
 }

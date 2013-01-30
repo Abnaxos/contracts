@@ -105,6 +105,10 @@ public abstract class AbstractAstVisitor implements AstVisitor {
     }
 
     @Override
+    public void visit(Literal literal) {
+    }
+
+    @Override
     public void visit(BlankNode blankNode) {
     }
 

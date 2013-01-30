@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel;
 
 /**
- * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
+ * Compile-time representations of Java classes and members.
  */
-public class CelError {
-
-    private final Position position;
-    private final String message;
-
-    public CelError(Position position, String message) {
-        this.position = position;
-        this.message = message;
-    }
-
-}
+package ch.raffael.contracts.processor.ct;

@@ -13,41 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.ast;
+package ch.raffael.contracts.processor.ct;
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public interface AstVisitor {
-
-    void visit(Assertion assertion);
-
-    void visit(IfExpression ifExpression);
-
-    void visit(ConditionalOp conditionalOp);
-
-    void visit(LogicalOp logicalOp);
-
-    void visit(BitwiseOp bitwiseOp);
-
-    void visit(EqualityOp equalityOp);
-
-    void visit(RelationalOp relationalOp);
-
-    void visit(ShiftOp shiftOp);
-
-    void visit(ArithmeticOp arithmeticOp);
-
-    void visit(UnaryOp unaryOp);
-
-    void visit(IdReference idReference);
-
-    void visit(MethodCall methodCall);
-
-    void visit(ArrayAccess arrayAccess);
-
-    void visit(Literal literal);
-
-    void visit(BlankNode blankNode);
+public class CtMethod {
 
 }

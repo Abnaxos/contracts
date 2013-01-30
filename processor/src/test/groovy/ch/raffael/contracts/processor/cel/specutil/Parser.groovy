@@ -16,9 +16,9 @@
 package ch.raffael.contracts.processor.cel.specutil
 
 import ch.raffael.contracts.processor.cel.CelErrorsException
-import ch.raffael.contracts.processor.cel.CelLexer
-import ch.raffael.contracts.processor.cel.CelParser
 import ch.raffael.contracts.processor.cel.ast.AstNode
+import ch.raffael.contracts.processor.cel.impl.CelLexer
+import ch.raffael.contracts.processor.cel.impl.CelParser
 import org.antlr.runtime.ANTLRStringStream
 import org.antlr.runtime.CommonTokenStream
 import org.antlr.runtime.RecognitionException

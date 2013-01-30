@@ -23,8 +23,10 @@ import org.antlr.runtime.Token;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
-import ch.raffael.contracts.processor.cel.CelLexer;
+import ch.raffael.contracts.Require;
+import ch.raffael.contracts.meta.NeedsWork;
 import ch.raffael.contracts.processor.cel.Position;
+import ch.raffael.contracts.processor.cel.impl.CelLexer;
 
 
 /**
@@ -32,6 +34,7 @@ import ch.raffael.contracts.processor.cel.Position;
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
+@NeedsWork(description = "There shouldn't be any references to Token from here")
 public final class Nodes {
 
     private static final Map<Integer, LogicalOp.Kind> LOGICAL_MAP = ttmap(
@@ -249,4 +252,21 @@ public final class Nodes {
     public static ArrayAccess arrayAccess(@NotNull Token tok, @NotNull AstNode source, @NotNull AstNode index) {
         return new ArrayAccess(pos(tok), source, index);
     }
+
+    @NotNull
+    public static Literal literal(@NotNull Position pos,
+                                  @NotNull Literal.Kind kind,
+                                  @Require("kind.isValueCompatible(value)") Object value)
+    {
+        return new Literal(pos, kind, value);
+    }
+
+    @NotNull
+    public static Literal literal(@NotNull Token tok,
+                                  @NotNull Literal.Kind kind,
+                                  @Require("kind.isValueCompatible(value)") Object value)
+    {
+        return new Literal(pos(tok), kind, value);
+    }
+
 }

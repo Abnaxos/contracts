@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel
+package ch.raffael.contracts.processor.cel.impl
 
+import ch.raffael.contracts.processor.cel.CelErrorsException
 import ch.raffael.contracts.processor.cel.specutil.Parser
 import ch.raffael.contracts.processor.cel.specutil.TrackFeature
 import spock.lang.Specification

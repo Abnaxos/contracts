@@ -94,15 +94,16 @@ tokens {
 }
 
 @parser::header {
-package ch.raffael.contracts.processor.cel;
+package ch.raffael.contracts.processor.cel.impl;
 
 import java.util.List;
 import java.util.LinkedList;
+import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.contracts.processor.cel.ast.*;
 }
 
 @lexer::header {
-package ch.raffael.contracts.processor.cel;
+package ch.raffael.contracts.processor.cel.impl;
 }
 
 @members {
@@ -110,7 +111,7 @@ package ch.raffael.contracts.processor.cel;
 	BlankNode blank() {
 		return Nodes.blank(input.LT(1));
 	}
-
+	
 }
 
 assertion returns [Assertion node]
@@ -209,7 +210,7 @@ primary returns [AstNode node=blank()]
 	: PAREN_OPEN expression PAREN_CLOSE {$node=$expression.node;}
 	| methodCall[null] {$node=$methodCall.node;}
 	| ID {$node=Nodes.idReference($ID, $ID.text);}
-	| literal
+	| literal {$node=$literal.node;}
 	| functionCall
 	| typeref ACCESS CLASS
 	| classref? ACCESS THIS
@@ -223,13 +224,13 @@ selector [AstNode source] returns [AstNode node=blank()]
 	;
 	
 literal returns [AstNode node=blank()]
-	: STRING
-	| CHAR
-	| INT
-	| FLOAT
-	| TRUE
-	| FALSE
-	| NULL
+	: STRING {$node=Literals.string($STRING, Literal.Kind.STRING);}
+	| CHAR {$node=Literals.string($CHAR, Literal.Kind.CHAR);}
+	| INT {$node=Literals.integer($INT);}
+	| FLOAT {$node=Literals.floatingPoint($FLOAT);}
+	| TRUE {$node=Nodes.literal($TRUE, Literal.Kind.BOOLEAN, true);}
+	| FALSE {$node=Nodes.literal($FALSE, Literal.Kind.BOOLEAN, false);}
+	| NULL {$node=Nodes.literal($NULL, Literal.Kind.NULL, null);}
 	;
 	
 methodCall [AstNode source] returns [AstNode node=blank()]
@@ -278,17 +279,29 @@ INT	:
 	( '0'
 	| ('1'..'9') DIGIT*
 	| '0' OCT_DIGIT+
-	| '0' 'x' HEX_DIGIT+
+	| HEX_PREFIX HEX_DIGIT+
 	) ('l'|'L')?
 	;
 
 FLOAT
     :
-    ( ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
-    |   '.' ('0'..'9')+ EXPONENT?
-    |   ('0'..'9')+ EXPONENT
-    ) ('d'|'D'|'f'|'F')?
+    ( (('0'..'9')+ '.' ('0'..'9')* EXPONENT?
+      |   '.' ('0'..'9')+ EXPONENT?
+      |   ('0'..'9')+ EXPONENT)
+    | (HEX_PREFIX (HEX_DIGIT)* 
+        (    () 
+        |    ('.' (HEX_DIGIT)* ) 
+        )
+        ( 'p' | 'P' )
+        ( '+' | '-' )?
+        ( '0' .. '9' )+
+    ))
+    ('d'|'D'|'f'|'F')?
     ;
+    
+fragment HEX_PREFIX
+	: '0' ('x'|'X')
+	;
 
 STRING
 	:	'\"' ( ESCAPE_SEQUENCE | ~('\"'|'\\') )* '\"'
@@ -306,7 +319,9 @@ fragment ESCAPE_SEQUENCE
 	|	'\''
 	|	'\\'
 	|	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-	|	OCT_DIGIT OCT_DIGIT OCT_DIGIT?
+	|	'0'..'3' OCT_DIGIT OCT_DIGIT
+	|	OCT_DIGIT OCT_DIGIT
+	|	OCT_DIGIT
 	)
 	;
 
