@@ -330,6 +330,7 @@ public class BrowserPanel {
             reloadClassAction.setEnabled(false);
         }
         else {
+            boolean indent = false;
             reloadClassAction.setEnabled(true);
             StringWriter string = new StringWriter();
             try ( InputStream in = new BufferedInputStream(Files.newInputStream(node.getPath()));
@@ -343,13 +344,33 @@ public class BrowserPanel {
                 }
                 else {
                     tracer = new TraceClassVisitor(null, new ASMifier(), out);
+                    indent = true;
                 }
                 reader.accept(tracer, 0);
             }
             catch ( IOException e ) {
                 this.context.require(ErrorDisplayer.class).displayError(root, e);
             }
-            asmSource.setText(string.toString());
+            if ( indent ) {
+                StringBuilder buf = new StringBuilder();
+                int d = 0;
+                for ( String line : string.toString().split("\\n\\r?|\\r") ) {
+                    if ( line.equals("}") ) {
+                        d--;
+                    }
+                    for ( int i = 0; i < d; i++ ) {
+                        buf.append("  ");
+                    }
+                    buf.append(line).append('\n');
+                    if ( line.equals("{") ) {
+                        d++;
+                    }
+                }
+                asmSource.setText(buf.toString());
+            }
+            else {
+                asmSource.setText(string.toString());
+            }
             asmSource.setSelectionStart(0);
             asmSource.setSelectionEnd(0);
         }
