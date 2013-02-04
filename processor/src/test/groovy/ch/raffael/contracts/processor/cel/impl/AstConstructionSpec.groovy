@@ -36,7 +36,7 @@ class AstConstructionSpec extends Specification {
 
     def "Sanity check: Throws CelErrorsException when parse errors occur"() {
       when:
-        this.assertion "a b (c d)"
+        this.clause "a b (c d)"
 
       then:
         thrown(CelErrorsException)

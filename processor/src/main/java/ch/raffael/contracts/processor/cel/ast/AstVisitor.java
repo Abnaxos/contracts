@@ -20,7 +20,7 @@ package ch.raffael.contracts.processor.cel.ast;
  */
 public interface AstVisitor {
 
-    void visit(Assertion assertion);
+    void visit(Clause clause);
 
     void visit(IfExpression ifExpression);
 

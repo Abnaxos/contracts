@@ -24,8 +24,8 @@ public abstract class AbstractAstVisitor implements AstVisitor {
     }
 
     @Override
-    public void visit(Assertion assertion) {
-        assertion.getExpression().accept(this);
+    public void visit(Clause clause) {
+        clause.getExpression().accept(this);
     }
 
     @Override

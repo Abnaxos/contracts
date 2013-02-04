@@ -24,12 +24,12 @@ import ch.raffael.contracts.processor.cel.Position;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Assertion extends AstNode {
+public final class Clause extends AstNode {
 
     private final boolean isFinally;
     private final AstNode expression;
 
-    Assertion(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
+    Clause(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
         super(pos);
         this.expression = expression;
         this.isFinally = isFinally;
@@ -46,7 +46,7 @@ public final class Assertion extends AstNode {
         if ( !super.equals(obj) ) {
             return false;
         }
-        Assertion that = (Assertion)obj;
+        Clause that = (Clause)obj;
         return isFinally == that.isFinally
                 && expression.equals(that.expression);
     }

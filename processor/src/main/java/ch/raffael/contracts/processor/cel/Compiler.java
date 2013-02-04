@@ -22,7 +22,7 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-import ch.raffael.contracts.processor.cel.ast.Assertion;
+import ch.raffael.contracts.processor.cel.ast.Clause;
 import ch.raffael.contracts.processor.cel.impl.CelLexer;
 import ch.raffael.contracts.processor.cel.impl.CelParser;
 
@@ -35,7 +35,7 @@ public class Compiler {
     private final List<CelError> errors = new LinkedList<>();
     private final Location sourceLocation;
     private final String expression;
-    private Assertion ast;
+    private Clause ast;
 
     public Compiler(Location sourceLocation, String expression) {
         this.sourceLocation = sourceLocation;
@@ -56,7 +56,7 @@ public class Compiler {
             }
         };
         try {
-            parser.assertion();
+            parser.clause();
         }
         catch ( RecognitionException e ) {
             // should not happen

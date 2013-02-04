@@ -32,8 +32,8 @@ class Ast {
         Nodes.blank(where())
     }
 
-    static Assertion assertion(AstNode expression, boolean isFinally=false) {
-        Nodes.assertion(where(), expression, isFinally)
+    static Clause clause(AstNode expression, boolean isFinally=false) {
+        Nodes.clause(where(), expression, isFinally)
     }
 
     static IfExpression ifExpr(AstNode condition, AstNode expression) {

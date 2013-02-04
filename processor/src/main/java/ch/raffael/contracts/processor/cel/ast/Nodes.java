@@ -104,13 +104,13 @@ public final class Nodes {
     }
 
     @NotNull
-    public static Assertion assertion(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
-        return new Assertion(pos, expression, isFinally);
+    public static Clause clause(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
+        return new Clause(pos, expression, isFinally);
     }
 
     @NotNull
-    public static Assertion assertion(Token tok, @NotNull AstNode expression, boolean isFinally) {
-        return new Assertion(pos(tok), expression, isFinally);
+    public static Clause clause(Token tok, @NotNull AstNode expression, boolean isFinally) {
+        return new Clause(pos(tok), expression, isFinally);
     }
 
     @NotNull

@@ -114,16 +114,12 @@ package ch.raffael.contracts.processor.cel.impl;
 	
 }
 
-assertion returns [Assertion node]
+clause returns [Clause node]
 	:	FINALLY?
 		ifExpression
-		{ Nodes.assertion($FINALLY!=null ? new Position($FINALLY.getLine(), $FINALLY.getCharPositionInLine()) : $ifExpression.node.getPosition(), $ifExpression.node, $FINALLY!=null); }
+		{ Nodes.clause($FINALLY!=null ? new Position($FINALLY.getLine(), $FINALLY.getCharPositionInLine()) : $ifExpression.node.getPosition(), $ifExpression.node, $FINALLY!=null); }
 		EOF
 	;
-
-/*ifExpression
-	:	(IF PAREN_OPEN! expression PAREN_CLOSE!)* expression
-	;*/
 
 ifExpression returns [AstNode node=blank()]
 	:	tok=IF PAREN_OPEN cond=expression PAREN_CLOSE expr=expression
