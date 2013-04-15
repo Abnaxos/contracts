@@ -22,7 +22,7 @@ import org.antlr.runtime.Token;
 import ch.raffael.contracts.NonNegative;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Positive;
-import ch.raffael.contracts.meta.NeedsWork;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**

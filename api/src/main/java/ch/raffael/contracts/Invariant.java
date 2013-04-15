@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Syntax;
 
-import ch.raffael.contracts.meta.NeedsWork;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**

@@ -15,9 +15,9 @@
  */
 package ch.raffael.contracts.processor.cel.impl
 
-import ch.raffael.contracts.meta.NeedsWork
 import ch.raffael.contracts.processor.cel.Position
 import ch.raffael.contracts.processor.cel.ast.Nodes
+import ch.raffael.contracts.util.NeedsWork
 import org.antlr.runtime.CommonToken
 import spock.lang.Specification
 

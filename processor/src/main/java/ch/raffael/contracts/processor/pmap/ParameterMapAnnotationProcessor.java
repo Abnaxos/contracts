@@ -46,7 +46,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import ch.raffael.contracts.meta.NeedsWork;
+import ch.raffael.contracts.util.NeedsWork;
 
 import static ch.raffael.contracts.processor.ContractsProcessor.*;
 import static org.objectweb.asm.Opcodes.*;

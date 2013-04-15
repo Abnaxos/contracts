@@ -24,9 +24,9 @@ import org.antlr.runtime.Token;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.Require;
-import ch.raffael.contracts.meta.NeedsWork;
 import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.contracts.processor.cel.impl.CelLexer;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**

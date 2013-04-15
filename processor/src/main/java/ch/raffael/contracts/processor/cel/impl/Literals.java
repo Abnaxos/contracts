@@ -18,12 +18,12 @@ package ch.raffael.contracts.processor.cel.impl;
 import org.antlr.runtime.Token;
 
 import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.meta.NeedsWork;
 import ch.raffael.contracts.processor.cel.CelError;
 import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.contracts.processor.cel.ast.AstNode;
 import ch.raffael.contracts.processor.cel.ast.Literal;
 import ch.raffael.contracts.processor.cel.ast.Nodes;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**
