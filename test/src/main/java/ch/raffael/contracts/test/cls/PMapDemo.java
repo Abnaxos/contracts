@@ -44,6 +44,6 @@ import static ch.raffael.contracts.processor.pmap.ParameterMap.*;
                 )
         }
 )
-public class PMapTest {
+public class PMapDemo {
 
 }
