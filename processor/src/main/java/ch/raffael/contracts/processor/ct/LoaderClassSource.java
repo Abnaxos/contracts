@@ -15,6 +15,7 @@
  */
 package ch.raffael.contracts.processor.ct;
 
+import java.io.IOException;
 import java.net.URL;
 
 import ch.raffael.contracts.NotNull;
@@ -23,27 +24,21 @@ import ch.raffael.contracts.NotNull;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class CtClass {
+public class LoaderClassSource implements ClassSource {
 
-    private final URL source;
-    private final ClassPool pool;
-    private final ClassName name;
-    private final CtClass superClass;
-    private final CtClass[] interfaces;
-    private final CtClass componentClass;
+    private final ClassLoader classLoader;
 
-    CtClass(URL source, ClassPool pool, ClassName name, CtClass superClass, CtClass[] interfaces, CtClass componentClass) {
-        this.source = source;
-        this.pool = pool;
-        this.name = name;
-        this.superClass = superClass;
-        this.interfaces = interfaces;
-        this.componentClass = componentClass;
+    public LoaderClassSource(@NotNull ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    @Override
+    public URL findClass(ClassName name) throws IOException {
+        return classLoader.getResource(name.toInternal() + ".class");
     }
 
     @NotNull
-    public CtClass arrayOfThis() throws NotFoundException {
-        return pool.get(name.withArrayDepth(name.getArrayDepth() + 1));
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
-
 }

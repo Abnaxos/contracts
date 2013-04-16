@@ -19,7 +19,7 @@ import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
-import ch.raffael.contracts.processor.ct.CtClass;
+import ch.raffael.contracts.processor.ct.ClassName;
 
 
 /**
@@ -72,59 +72,63 @@ public final class Literal extends AstNode {
 
     public static enum Kind {
 
-        INT(CtClass.INT) {
+        INT(ClassName.INT) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Integer;
             }
         },
-        LONG(CtClass.LONG) {
+        LONG(ClassName.LONG) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Long;
             }
         },
-        FLOAT(CtClass.FLOAT) {
+        FLOAT(ClassName.FLOAT) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Float;
             }
         },
-        DOUBLE(CtClass.DOUBLE) {
+        DOUBLE(ClassName.DOUBLE) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Double;
             }
         },
-        BOOLEAN(CtClass.BOOLEAN) {
+        BOOLEAN(ClassName.BOOLEAN) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Boolean;
             }
         },
-        STRING(CtClass.STRING) {
+        STRING(ClassName.STRING) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof String;
             }
         },
-        CHAR(CtClass.CHAR) {
+        CHAR(ClassName.CHAR) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value instanceof Character;
             }
         },
-        NULL(CtClass.OBJECT) {
+        NULL(ClassName.OBJECT) {
             @Override
             public boolean isValueCompatible(Object value) {
                 return value == null;
             }
         };
 
-        private final CtClass ctClass;
+        private final ClassName className;
 
-        private Kind(CtClass ctClass) {
-            this.ctClass = ctClass;
+        private Kind(ClassName className) {
+            this.className = className;
+        }
+
+        public ClassName getClassName() {
+            return className;
         }
 
         public abstract boolean isValueCompatible(Object value);
