@@ -27,10 +27,12 @@ import ch.raffael.contracts.meta.Permanent;
 
 
 /**
- * <p>Surround the method body with lock()/unlock() on the specified {@link
- * java.util.concurrent.locks.Lock Lock} object. All contracts will be evaluated while
- * this lock is being held.</p> <p/> <p>Unlike most other contract annotations, this
- * instrumentation will always be active, even if the agent is not loaded.</p>
+ * Surround the method body with lock()/unlock() on the specified
+ * {@link java.util.concurrent.locks.Lock Lock} object. All contracts will be evaluated
+ * while this lock is being held.
+ *
+ * Unlike most other contract annotations, this instrumentation will always be active,
+ * even if the agent is not loaded.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

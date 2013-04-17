@@ -15,181 +15,176 @@
  */
 
 /**
- * <p>Annotations and runtime classes for contracts.</p>
+ * Annotations and runtime classes for contracts.
  *
- * <h2>Concepts</h2>
+ * Concepts
+ * --------
  *
- * <p>There are three main annotations:</p>
+ * There are three main annotations:
  *
- * <dl>
- * <dt>{@link ch.raffael.contracts.Require Require}</dt>
- * <dd><em>Preconditions</em>: Conditions that must be true on method entry. This can
- * also be used to check the method parameters. <strong>Inheritance</strong>:
- * Inheriting classes may <em>extend</em> the contract, i.e. inherited preconditions
- * will be <em>OR</em>-associated.</dd>
+ * {@link ch.raffael.contracts.Require Require}
+ * :   *Preconditions*: Conditions that must be true on method entry. This can also be
+ *     used to check the method parameters. **Inheritance**: Inheriting classes may
+ *     *extend* the contract, i.e. inherited preconditions will be *OR*-associated.
  *
- * <dt style="margin-top:1ex">{@link ch.raffael.contracts.Ensure Ensure}</dt>
- * <dd><em>Postconditions</em>: Conditions that must be true on method entry. This can
- * also be used to check the method's return value. <strong>Inheritance</strong>:
- * Inheriting classes may further <em>constrain</em> the contract, i.e. inherited
- * postconditions will be <em>AND</em>-associated.</dd>
+ * {@link ch.raffael.contracts.Ensure Ensure}
+ * :   *Postconditions*: Conditions that must be true on method entry. This can also be
+ *     used to check the method's return value. **Inheritance**: Inheriting classes may
+ *     further *constrain* the contract, i.e. inherited postconditions will be
+ *     *AND*-associated.
  *
- * <dt style="margin-top:1ex">{@link ch.raffael.contracts.Invariant Invariant}</dt>
- * <dd>Conditions that must be true both on method entry and exit for each method of
- * the class. <strong>Inheritance</strong>: Inheriting classes may further
- * <em>constrain</em> the contract, i.e. inherited invariants will be
- * <em>AND</em>-associated.</dd>
- * </dl>
+ * {@link ch.raffael.contracts.Invariant Invariant}
+ * :   Conditions that must be true both on method entry and exit for each method of the
+ * class. **Inheritance**: Inheriting classes may further *constrain* the contract, i.e.
+ * inherited invariants will be *AND*-associated.
  *
- * <p>The conditions are expressed using Cel expressions.</p>
+ * The conditions are expressed using Cel expressions.
  *
- * <h2>The Contract Expression Language Cel</h2>
+ * The Contract Expression Language Cel
+ * ------------------------------------
  *
- * <p>Generally, Cel expressions are just Java expressions evaluated in the scope of the
- * class they are defined in. Conditions that are defined for a method
- * (Require and Ensure) additionally may access the
- * method parameters (but not local variables). See also the full
- * <a href="processor/cel/Cel.g">ANTLR3 grammar</a>.</p>
+ * Generally, Cel expressions are just Java expressions evaluated in the scope of the
+ * class they are defined in. Conditions that are defined for a method (Require and
+ * Ensure) additionally may access the method parameters (but not local variables). See
+ * also the full [ANTLR3 grammar](processor/cel/Cel.g).
  *
- * <p>There are, however, some limitations in these expressions:</p>
+ * There are, however, some limitations in these expressions:
  *
- * <ul>
- * <li><strong>New instances</strong>: Cel expressions cannot create new instances. The
- * <code>new</code> operator is disabled.</li>
+ *  *  **New instances**: Cel expressions cannot create new instances. The `new` operator
+ *     is disabled.
  *
- * <li><strong>Assignments</strong>: Cel expressions must be free of any side-effects,
- * therefore they cannot change any values. All assignment operators, including pre-
- * and post-increment and -decrement.</li>
+ *  *  **Assignments**: Cel expressions must be free of any side-effects, therefore they
+ *     cannot change any values. All assignment operators, including pre- and
+ *     post-increment and -decrement.
  *
- * <li><strong>Generics</strong>: For now, Cel expressions operate on the erasure,
- * there's no support for generics.</li>
+ *  *  **Generics**: For now, Cel expressions operate on the erasure, there's no support
+ *      for generics.
  *
- * <li><strong>Autoboxing</strong>: There is no support for autoboxing/-unboxing.</li>
- * </ul>
+ *  * **Autoboxing**: There is no support for autoboxing/-unboxing.
  *
- * <p>On the other side, there are a few extensions to Java expressions described
- * below.</p>
+ * On the other side, there are a few extensions to Java expressions described below.
  *
  *
- * <h3>String and character literals</h3>
+ * ### String and character literals
  *
- * <p>Contract expressions are embedded in the Java code as annotations. This means that
- * whenever you're writing a string literal, you'd have to escape the quotes:</p>
+ * Contract expressions are embedded in the Java code as annotations. This means that
+ * whenever you're writing a string literal, you'd have to escape the quotes:
  *
- * <pre>{@literal @Require("foo.startsWith(\"bar\")")}
- *{@literal @Ensure("@result().startsWith(\"\\\"\")") // ouch!}</pre>
+ * ```java
+ * {@literal @}Require("foo.startsWith(\"bar\")")
+ * {@literal @}Ensure("@result().startsWith(\"\\\"\")") // ouch!
+ * ```
  *
- * <p>To work around this issue, Cel also supports singe quotes for string literals:</p>
+ * To work around this issue, Cel also supports singe quotes for string literals:
  *
- * <pre>{@literal @Require("foo.startsWith('bar')")}
- *{@literal @Ensure("@result().startsWith('\"')")}</pre>
+ * ```java
+ * {@literal @}Require("foo.startsWith('bar')")
+ * {@literal @}Ensure("@result().startsWith('\"')")
+ * ```
  *
  * This, however, conflicts with char literals, which is why Cel introduces a new syntax
  * for them. Use single quotes as usual, but append a 'c' (case-insensitive):
  *
- * <pre>{@literal @Require("foo=='X'c")}</pre>
+ * ```java
+ * {@literal @}Require("foo=='X'c")
+ * ```
  *
  *
- * <h3>Conditional conditions ;)</h3>
+ * ### Conditional conditions ;)
  *
- * <p>Basically, this is just another way of writing logical OR. The advantage is that
- * it's more natural and intuitively understandable. An example:</p>
+ * Basically, this is just another way of writing logical OR. The advantage is that it's
+ * more natural and intuitively understandable. An example:
  *
- * <pre>if ( myObject != null ) myObject.isValid()</pre>
+ * ```java
+ * if ( myObject != null ) myObject.isValid()
+ * ```
  *
- * <p>Read: "If myObject is not null, it must be valid". This is a more readable way of
- * writing:</p>
+ * Read: "If myObject is not null, it must be valid". This is a more readable way of
+ * writing:
  *
- * <pre>myObject == null || myObject.isValid()</pre>
+ * ```java
+ * myObject == null || myObject.isValid()
+ * ```
  *
  *
- * <h3>Finally</h3>
+ * ### Finally
  *
  * Postconditions, if not otherwise specified, will only be checked upon normal method
- * exit. To check them also when the method is throwing an exception, use {@code finally}:
+ * exit. To check them also when the method is throwing an exception, use `finally`:
  *
- * <pre>@Ensure("finally a==b")</pre>
+ * ```java
+ * {@literal @}Ensure("finally a==b")
+ * ```
  *
  * To check a post-condition only when throwing, use the {@code @thrown} function (see
  * below):
  *
- * <pre>@Ensure("finally if(@thrown()) a==b</pre>
+ * ```java
+ * {@literal @}Ensure("finally if(@thrown()) a==b
+ * ```
  *
  *
- * <h3>Functions</h3>
+ * ### Functions
  *
- * <p>Functions provide some extended functionality needed to express contracts. All
- * functions start with an '@' character. The following functions are recognised:</p>
+ * Functions provide some extended functionality needed to express contracts. All
+ * functions start with an '@' character. The following functions are recognised:
  *
- * <dl>
- * <dt><code>@old(&lt;expression&gt;)</code></dt>
- * <dd>
- * [<code>Ensure, Invariant</code>]
- * Evaluate the expression on method-entry but refer to its value on
- * method-exit.
- * <p><strong>Example</strong></p>
- * <pre>size() == @old(size()) + 1</pre>
- * <p>(e.g. postcondition for the add() method of a list)</p>
- * </dd>
+ * `@old(<expression>)`
+ * :   *[Ensure, Invariant]*<br/>
+ *     Evaluate the expression on method-entry but refer to its value on method-exit.
  *
- * <dt style="margin-top:1ex"><code>@result()</code></dt>
- * <dd>
- * [Ensure</code>] Refer to the return value of the method.
- * </dd>
+ *     **Example**
  *
- * <dt style="margin-top:1ex"><code>@thrown([&lt;exception-class&gt;])</code></dt>
- * <dd>
- * [<code>Ensure, Invariant</code>] Check that
- * an exception has been thrown. If the exception is not specified,
- * {@link java.lang.Throwable Throwable} is assumed. There are two variants:
- * <ul>
- * <li><code>thrown(IllegalStateException)</code> is true, if the method
- * threw an IllegalStateException.</li>
- * <li><code>thrown(IllegalStateException).getMessage().equals("Foo")</code>
- * is true, if the method threw an IllegalStateException and the message
- * equals "foo".</li>
- * </ul>
- * </dd>
+ *     ```java
+ *     size() == @old(size()) + 1
+ *     ```
+ *     (e.g. postcondition for the add() method of a list)
  *
- * <dt style="margin-top:1ex"><code>@param([&lt;index&gt;])</code></dt>
- * <dd>
- * [<code>Require, Ensure</code>] Usually, you
- * can (and should) refer to parameters by their name. This allows to access
- * parameters by their index. If the annotation is on the method, the index is
- * required and absolute (<code>@param(0)</code> refers to the first parameter).
- * If the annotation is on a parameter, the index can be omitted and is relative:
- * <code>@param(0)</code> refers to the annotated parameter,
- * <code>@param(-1)</code> and <code>@param(+1)</code> refer to the parameter to
- * the left and right of the annotated parameter. In this context, the index can
- * be omitted: <code>@param()</code> refers to the annotated parameter.
- * </dd>
+ * `@result()`
+ * :   *[Ensure]*<br/>
+ *     Refer to the return value of the method.
  *
- * <dt style="margin-top:1ex"><code>@each(&lt;expression&gt;, &lt;identifier&gt; -&gt; &lt;expression&gt;)</code></dt>
- * <dd>
- * [<code>Require, Ensure, Invariant</code>]
- * Make sure an expression is true for each element of an <code>Iterable</code>
- * or array.
+ * `@thrown([<exception-class>])`
+ * :   *[Ensure, Invariant]*<br/>
+ *     Check that an exception has been thrown. If the exception is not specified,
+ *     {@link java.lang.Throwable Throwable} is assumed. There are two variants:
  *
- * <p><strong>Example</strong></p>
- * <pre>@each(getChildren(), child -&gt; child.isValid())</pre>
- * <p>Ensure that each element of <code>getChildren()</code> is valid.</p>
- * </dd>
+ *      *  `@thrown(IllegalStateException)` is true, if the method threw an
+ *         IllegalStateException.
  *
- * <dt style="margin-top:1ex"><code>@equal(&lt;expression&gt;, &lt;expression&gt;)</code></dt>
- * <dd>
- * [<code>Require, Ensure, Invariant</code>]
- * Null-safe equals. <code>@equal(a, b)</code> is the same as
- * <code>a==null ? b==null : a.equals(b)</code>
- * </dd>
+ *      *  `@thrown(IllegalStateException).getMessage().equals("Foo")` is true, if the
+ *         method threw an IllegalStateException and the message equals "foo".
  *
- * <dt style="margin-top:1ex"><code>@regex(&lt;regular-expression&gt; [, &lt;flags&gt;)</code></dt>
- * <dd>
- * [<code>Require, Ensure, Invariant</code>]
- * Shorthand to <code>java.util.regex.Pattern</code>. Specify flags as a comma
- * separated list of the constants defined in <code>Pattern</code> (e.g.
- * <code>@regex("ab+c.*", CASE_INSENSITIVE, DOTALL)</code>). The result of this
- * function is a {@link ch.raffael.contracts.internal.Regex}.
- * </dd>
- * </dl>
+ * `@param([<index>])`
+ * :   *[Require, Ensure]*<br/>
+ *     Usually, you can (and should) refer to parameters by their name. This allows to
+ *     access parameters by their index. If the annotation is on the method, the index is
+ *     required and absolute (<code>@param(0)</code> refers to the first parameter). If
+ *     the annotation is on a parameter, the index can be omitted and is relative:
+ *     `@param(0)` refers to the annotated parameter, `@param(-1)` and `@param(+1)` refer
+ *     to the parameter to the left and right of the annotated parameter. In this context,
+ *     the index can be omitted: `@param()` refers to the annotated parameter.
+ *
+ *`@each(<expression>, <identifier> -> <expression>)`
+ * :   *[Require, Ensure, Invariant]*<br/>
+ *     Make sure an expression is true for each element of an `Iterable` or array.
+ *
+ *     **Example**
+ *
+ *     ```java
+ *     {@literal @}each(getChildren(), child -> child.isValid())
+ *     ```
+ *     Ensure that each element of `getChildren()` is valid.
+ *
+ * `@equal(<expression>, <expression>)`
+ * :   *[Require, Ensure, Invariant]*<br/>
+ *     Null-safe equals. `@equal(a, b)` is the same as `a==null ? b==null : a.equals(b)`.
+ *
+ * `@regex(<regular-expression> [, <flags>])`
+ * :   *[Require, Ensure, Invariant]*<br/>
+ *     Shorthand to {@link java.util.regex.Pattern}. Specify flags as a comma separated
+ *     list of the constants defined in `Pattern` (e.g.
+ *     `@regex("ab+c.*", CASE_INSENSITIVE, DOTALL)`). The result of this function is a
+ *     {@link ch.raffael.contracts.internal.Regex}.
  */
 package ch.raffael.contracts;

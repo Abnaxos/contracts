@@ -53,44 +53,38 @@ import static org.objectweb.asm.Opcodes.*;
 
 
 /**
- * <p></p>Processor gathering parameter names and writing them to the Contracts class as
- * {@link ParameterMap} annotations.</p>
+ * Processor gathering parameter names and writing them to the Contracts class as
+ * {@link ParameterMap} annotations.
  *
- * <p>Due to limitations of Java, gathering parameter names is a bit complicated. There
- * are two possible sources for parameter names:</p>
+ * Due to limitations of Java, gathering parameter names is a bit complicated. There
+ * are two possible sources for parameter names:
  *
- * <ul>
- *     <li>The source code using an annotation processor.</li>
+ *  *  The source code using an annotation processor.
  *
- *     <li>The local variable table in the debug information.</li>
- * </ul>
+ *  *  The local variable table in the debug information.
  *
- * <p>Both these sources have some drawbacks which make it impossible to gather
- * <em>all</em> parameter names:</p>
+ * Both these sources have some drawbacks which make it impossible to gather *all*
+ * parameter names:
  *
- * <ul>
- *     <li>The annotation processor can't read parameter names of methods in anonymous
+ *  *  The annotation processor can't read parameter names of methods in anonymous
  *     classes (this includes Enum constants) or local classes. Annotation processing
  *     by stops by definition at code level, i.e. method bodies or field
  *     initializers. See also
- *     <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6587158">bug #6587158</a>.
- *     </li>
+ *     [bug #6587158](http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6587158).
  *
- *     <li>A local variable table won't be present in abstract methods (which includes
+ *  *  A local variable table won't be present in abstract methods (which includes
  *     all interface methods). Abstract methods have no method body, therefore no local
- *     variables, therefore no local variable table.</li>
- * </ul>
+ *     variables, therefore no local variable table.
  *
- * <p>However, if we combine these two methods, we can extract almost all parameter names:
+ * However, if we combine these two methods, we can extract almost all parameter names:
  * Anonymous classes can't be abstract, so we can always extract the parameter names from
  * debug information. There's only one exception, where it's absolutely impossible to
  * collect parameter names: Abstract methods of local classes. I think, we can bear with
- * that. The <code>param()</code> function exists, after all. ;)</p>
+ * that. The `param()` function exists, after all. ;)
  *
- * <p>Another possibility would be to use the
- * <a href="http://docs.oracle.com/javase/7/docs/jdk/api/javac/tree/index.html">Compiler
- * Tree API</a>, however this is only available for OpenJDK/Oracle JDK and very
- * complicated to use.</p>
+ * Another possibility would be to use the
+ * [Compiler Tree API](http://docs.oracle.com/javase/7/docs/jdk/api/javac/tree/index.html),
+ * however this is only available for OpenJDK/Oracle JDK and very complicated to use.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

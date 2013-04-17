@@ -171,16 +171,29 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <attach>true</attach>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
           <author>true</author>
           <doctitle>ch.raffael.contracts ${project.version} Documentation</doctitle>
           <windowtitle>ch.raffael.contracts ${project.version} Documentation</windowtitle>
 
+          <overview>src/main/javadoc/overview.md</overview>
+
           <excludePackageNames>ch.raffael.contracts.test*:ch.raffael.contracts.processor.maven:ch.raffael.contracts.processor.ant</excludePackageNames>
           <groups>
             <group>
               <title>API</title>
-              <packages>ch.raffael.contracts:ch.raffael.contracts.meta</packages>
+              <packages>ch.raffael.contracts:ch.raffael.contracts.meta:ch.raffael.contracts.util</packages>
             </group>
             <group>
               <title>Internal Runtime Classes</title>
@@ -195,6 +208,13 @@
               <packages>ch.raffael.contracts.devtools.*</packages>
             </group>
           </groups>
+
+          <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+          <docletArtifact>
+            <groupId>ch.raffael.pegdown-doclet</groupId>
+            <artifactId>pegdown-doclet</artifactId>
+            <version>1.1-SNAPSHOT</version>
+          </docletArtifact>
 
           <footer>
             <![CDATA[

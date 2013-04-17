@@ -46,8 +46,7 @@ public @interface ParameterMap {
     @Retention(RetentionPolicy.CLASS)
     @interface Method {
         /**
-         * The method descriptor in internal format (e.g.
-         * {@code equals(Ljava/lang/Object;)Z)}.
+         * The method descriptor in internal format: `equals(Ljava/lang/Object;)Z`.
          */
         String descriptor();
         String[] parameterNames();

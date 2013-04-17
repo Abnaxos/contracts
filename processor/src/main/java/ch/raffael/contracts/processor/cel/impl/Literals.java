@@ -27,10 +27,10 @@ import ch.raffael.contracts.util.NeedsWork;
 
 
 /**
- * Some helper methods for literals. The grammar is written in a way that the input
- * <em>will</em> be valid: The lexer wouldn't have recognised it, if it wasn't. That's
- * why there are only minimal error checks in here. If the lexer did something wrong, the
- * code will fail miserably.
+ * Some helper methods for literals. The grammar is written in a way that the input *will*
+ * be valid: The lexer wouldn't have recognised it, if it wasn't. That's why there are
+ * only minimal error checks in here. If the lexer did something wrong, the code will fail
+ * miserably.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

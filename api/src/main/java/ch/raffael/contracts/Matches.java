@@ -28,8 +28,8 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
- * <p>The parameter or return value must match a regular expression. Only applicable
- * to {@link CharSequence}.</p>
+ * The parameter or return value must match a regular expression. Only applicable
+ * to {@link CharSequence}.
  *
  * @see Pattern
  *

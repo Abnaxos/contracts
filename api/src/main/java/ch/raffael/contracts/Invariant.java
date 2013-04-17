@@ -27,14 +27,14 @@ import ch.raffael.contracts.util.NeedsWork;
 
 
 /**
- * <p>Define a contract that must be <code>true</code> at all times.</p>
+ * Define a contract that must be `true` at all times.
  *
- * <p>Invariants will be checked both on method entry and method exit. <strike>They apply
+ * Invariants will be checked both on method entry and method exit. <strike>They apply
  * to public non-static methods only, as only these are considered the public interface
- * of an object</strike> (not sure about that).</p>
+ * of an object</strike> (not sure about that).
  *
- * <p><strong>Inheritance</strong>: Invariant contracts may be strengthened by extending
- * classes, but not weakened. Inherited contracts will be <em>AND</em>-associated.</p>
+ * **Inheritance**: Invariant contracts may be strengthened by extending classes, but not
+ * weakened. Inherited contracts will be *AND*-associated.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

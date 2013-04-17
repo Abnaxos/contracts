@@ -25,7 +25,7 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
- * <p>The parameter or return value be greater than 0.</p>
+ * The parameter or return value be greater than 0.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

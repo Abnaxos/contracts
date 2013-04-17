@@ -25,7 +25,7 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
- * <p>The parameter or return value must not be <code>null</code>.</p>
+ * The parameter or return value must not be `null`.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

@@ -25,10 +25,10 @@ import javax.annotation.Syntax;
 
 
 /**
- * <p>Require that a <em>precondition</em> is true on method entry.</p>
+ * Require that a *precondition* is `true` on method entry.
  *
- * <p><strong>Inheritance</strong>: Extending classes may weaken preconditions, but not
- * strengthen them. Inherited preconditions will be <em>OR</em>-associated.</p>
+ * **Inheritance**: Extending classes may weaken preconditions, but not strengthen them.
+ * Inherited preconditions will be *OR*-associated.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

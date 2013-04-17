@@ -25,11 +25,10 @@ import javax.annotation.Syntax;
 
 
 /**
- * <p>Ensure that a <em>postcondition</em> is <code>true</code> on method exit.</p>
+ * Ensure that a *postcondition* is `true` on method exit.
  *
- * <p><strong>Inheritance</strong>: Postcondition contracts may be strengthened by
- * subclasses, but not weakened. Inherited preconditions will be
- * <em>AND</em>-associated.</p>
+ * **Inheritance**: Postcondition contracts may be strengthened by subclasses, but not
+ * weakened. Inherited preconditions will be *AND*-associated.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

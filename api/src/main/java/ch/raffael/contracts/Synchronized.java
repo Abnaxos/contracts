@@ -26,14 +26,14 @@ import ch.raffael.contracts.meta.Permanent;
 
 
 /**
- * <p>Synchronize the method body on the specified object. All contracts will be evaluated
- * within this <code>synchronized</code> block.</p>
+ * Synchronize the method body on the specified object. All contracts will be evaluated
+ * within this `synchronized` block.
  *
- * <p>Note that <code>Synchronized("this")</code> is always implied if the method is
- * declared <code>synchronized</code>.</p>
+ * Note that `@Synchronized("this")` is always implied if the method is declared
+ * `synchronized`.
  *
- * <p>Unlike most other contract annotations, this instrumentation will always be active,
- * even if the agent is not loaded.</p>
+ * Unlike most other contract annotations, this instrumentation will always be active,
+ * even if the agent is not loaded.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */

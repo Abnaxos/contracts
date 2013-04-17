@@ -25,8 +25,8 @@ import ch.raffael.contracts.meta.Equivalent;
 
 
 /**
- * <p>The parameter or return value may be negative. This is actually a pseudo-contract
- * (obviously), it just documents that fact.</p>
+ * The parameter or return value may be negative. This is actually a pseudo-contract
+ * (obviously), it just documents that fact.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
