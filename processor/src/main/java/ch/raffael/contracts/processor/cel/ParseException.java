@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel
+package ch.raffael.contracts.processor.cel;
 
-import org.antlr.v4.runtime.RecognitionException
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-class CelErrorsException extends Exception {
+public class ParseException extends Exception {
 
-    final List<RecognitionException> errors
+    private final List<CelError> errors;
 
-    CelErrorsException(List<RecognitionException> errors) {
-        super(message(errors))
-        this.errors = errors
+    public ParseException(List<CelError> errors) {
+        this.errors = ImmutableList.copyOf(errors);
     }
 
-    private static String message(List<RecognitionException> errors) {
-        String msg = "There were Cel errors:"
-        errors.each { e ->
-            msg += "\n${e.toString()}"
-        }
-        return msg
+    public List<CelError> getErrors() {
+        return errors;
     }
-
 }

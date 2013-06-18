@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import org.antlr.runtime.Token;
+import org.antlr.v4.runtime.Token;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
 import ch.raffael.contracts.Require;
 import ch.raffael.contracts.processor.cel.Position;
-import ch.raffael.contracts.processor.cel.impl.CelLexer;
+import ch.raffael.contracts.processor.cel.parser.CelLexer;
 import ch.raffael.contracts.util.NeedsWork;
 
 

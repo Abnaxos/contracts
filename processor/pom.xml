@@ -28,7 +28,7 @@
   <description></description>
 
   <properties>
-    <antlr.version>3.5</antlr.version>
+    <antlr.version>4.0</antlr.version>
   </properties>
 
   <parent>
@@ -57,7 +57,7 @@
 
     <dependency>
       <groupId>org.antlr</groupId>
-      <artifactId>antlr-runtime</artifactId>
+      <artifactId>antlr4-runtime</artifactId>
       <version>${antlr.version}</version>
     </dependency>
     <dependency>
@@ -84,13 +84,13 @@
       </plugin>
       <plugin>
         <groupId>org.antlr</groupId>
-        <artifactId>antlr3-maven-plugin</artifactId>
+        <artifactId>antlr4-maven-plugin</artifactId>
         <version>${antlr.version}</version>
         <executions>
           <execution>
             <id>antlr</id>
             <goals>
-              <goal>antlr</goal>
+              <goal>antlr4</goal>
             </goals>
             <phase>generate-sources</phase>
           </execution>

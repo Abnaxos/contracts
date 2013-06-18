@@ -17,7 +17,7 @@ package ch.raffael.contracts.processor.cel;
 
 import javax.annotation.concurrent.Immutable;
 
-import org.antlr.runtime.Token;
+import org.antlr.v4.runtime.Token;
 
 import ch.raffael.contracts.NonNegative;
 import ch.raffael.contracts.NotNull;

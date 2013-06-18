@@ -63,6 +63,12 @@ public final class MethodCall extends Selector {
         return appendHash(appendHash(super.hashCode(), methodName), arguments);
     }
 
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return ImmutableList.<AstNode>builder().add(getSource()).addAll(arguments).build();
+    }
+
     @Override
     protected void doAccept(AstVisitor visitor) {
         visitor.visit(this);

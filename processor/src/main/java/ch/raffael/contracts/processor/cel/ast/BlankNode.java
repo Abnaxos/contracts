@@ -15,6 +15,9 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
+import java.util.List;
+
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
 
@@ -26,6 +29,12 @@ public final class BlankNode extends AstNode {
 
     BlankNode(@NotNull Position position) {
         super(position);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -15,6 +15,9 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
@@ -53,6 +56,12 @@ public final class IdReference extends Selector {
     @Override
     public int hashCode() {
         return appendHash(super.hashCode(), identifier);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return Collections.singletonList(getSource());
     }
 
     @Override

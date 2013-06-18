@@ -15,8 +15,12 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
-import com.google.common.base.Objects;
+import java.util.List;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+
+import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
 
 
@@ -55,6 +59,12 @@ public final class IfExpression extends AstNode {
     @Override
     public int hashCode() {
         return appendHash(appendHash(super.hashCode(), this.condition), this.expression);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return ImmutableList.of(condition, expression);
     }
 
     @Override

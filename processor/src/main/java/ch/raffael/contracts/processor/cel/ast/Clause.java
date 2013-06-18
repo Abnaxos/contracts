@@ -15,6 +15,9 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
@@ -57,6 +60,12 @@ public final class Clause extends AstNode {
         hash = appendHash(hash, isFinally);
         hash = appendHash(hash, expression);
         return hash;
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return Collections.singletonList(expression);
     }
 
     @Override

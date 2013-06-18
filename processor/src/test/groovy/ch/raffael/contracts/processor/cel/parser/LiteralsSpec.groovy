@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.impl
+package ch.raffael.contracts.processor.cel.parser
 
 import ch.raffael.contracts.processor.cel.Position
 import ch.raffael.contracts.processor.cel.ast.Nodes
 import ch.raffael.contracts.util.NeedsWork
-import org.antlr.runtime.CommonToken
+import org.antlr.v4.runtime.CommonToken
 import spock.lang.Specification
 
 import static ch.raffael.contracts.processor.cel.ast.Literal.Kind.*

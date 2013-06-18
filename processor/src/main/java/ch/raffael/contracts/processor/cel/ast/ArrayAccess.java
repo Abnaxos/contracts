@@ -15,7 +15,10 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
@@ -52,6 +55,12 @@ public final class ArrayAccess extends Selector {
     @Override
     public int hashCode() {
         return appendHash(super.hashCode(), index);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return ImmutableList.of(getSource(), index);
     }
 
     @Override

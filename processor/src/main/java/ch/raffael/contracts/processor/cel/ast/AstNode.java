@@ -16,7 +16,10 @@
 package ch.raffael.contracts.processor.cel.ast;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
@@ -39,7 +42,11 @@ public abstract class AstNode {
     private AstNode parent;
 
     private final Position position;
-    private USet<CelError> errors = new USet(new LinkedHashSet<>());
+    private final USet<CelError> errors = new USet(new LinkedHashSet<>());
+
+    private final Map<Annotation<?>, Object> annotations = new HashMap<>();
+
+    private List<AstNode> children = null;
 
     AstNode(Position position) {
         this.position = position;
@@ -98,6 +105,17 @@ public abstract class AstNode {
         return parent;
     }
 
+    @NotNull
+    public List<AstNode> getChildren() {
+        if ( children == null ) {
+            children = children();
+        }
+        return children;
+    }
+
+    @NotNull
+    protected abstract List<AstNode> children();
+
     public Position getPosition() {
         return position;
     }
@@ -135,6 +153,33 @@ public abstract class AstNode {
             child(child);
         }
         return children;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T set(Annotation<T> annotation, T value) {
+        if ( value == null ) {
+            return (T)annotations.remove(annotation);
+        }
+        else {
+            return (T)annotations.put(annotation, value);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public <T> T get(@NotNull Annotation<T> annotation) {
+        T value = (T)annotations.get(annotation);
+        if ( value == null ) {
+            throw new IllegalStateException("Required annotation " + annotation + " not set on " + this);
+        }
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Ensure("if(fallback!=null) @result!=null")
+    public <T> T get(@NotNull Annotation<T> annotation, T fallback) {
+        T value = get(annotation);
+        return value == null ? fallback : value;
     }
 
 }

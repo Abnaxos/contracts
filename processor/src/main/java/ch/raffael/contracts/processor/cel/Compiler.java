@@ -18,13 +18,17 @@ package ch.raffael.contracts.processor.cel;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 
 import ch.raffael.contracts.processor.cel.ast.Clause;
-import ch.raffael.contracts.processor.cel.impl.CelLexer;
-import ch.raffael.contracts.processor.cel.impl.CelParser;
+import ch.raffael.contracts.processor.cel.parser.AstBuilder;
+import ch.raffael.contracts.processor.cel.parser.CelLexer;
+import ch.raffael.contracts.processor.cel.parser.CelParser;
 
 
 /**
@@ -35,37 +39,42 @@ public class Compiler {
     private final List<CelError> errors = new LinkedList<>();
     private final Location sourceLocation;
     private final String expression;
-    private Clause ast;
 
     public Compiler(Location sourceLocation, String expression) {
         this.sourceLocation = sourceLocation;
         this.expression = expression;
     }
 
-    public void parse() {
-        CelLexer lexer = new CelLexer(new ANTLRStringStream(expression)) {
+    public Clause parse() throws ParseException {
+        ANTLRErrorListener errorListener = new BaseErrorListener() {
             @Override
-            public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
-                addANTLRError(e, getErrorMessage(e, tokenNames));
+            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+                addANTLRError(e, msg);
             }
         };
-        CelParser parser = new CelParser(new CommonTokenStream(lexer)) {
-            @Override
-            public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
-                addANTLRError(e, getErrorMessage(e, tokenNames));
-            }
-        };
+        CelLexer lexer = new CelLexer(new ANTLRInputStream(expression));
+        lexer.addErrorListener(errorListener);
+        CelParser parser = new CelParser(new CommonTokenStream(lexer));
+        parser.addErrorListener(errorListener);
         try {
-            parser.clause();
+            Clause ast = new AstBuilder().install(parser).clause().node;
+            if ( ast == null ) {
+                if ( errors.isEmpty() ) {
+                    throw new IllegalStateException("No AST returned, but no errors reported");
+                }
+                throw new ParseException(errors);
+            }
+            return ast;
         }
         catch ( RecognitionException e ) {
             // should not happen
             addANTLRError(e, "Unexpected: " + e.toString());
+            throw new ParseException(errors);
         }
     }
 
     private void addANTLRError(RecognitionException e, String msg) {
-        errors.add(new CelError(new Position(e.line, e.charPositionInLine), msg));
+        errors.add(new CelError(new Position(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine()), msg));
     }
 
 }

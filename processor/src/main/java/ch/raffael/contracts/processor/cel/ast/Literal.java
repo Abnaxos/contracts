@@ -15,6 +15,9 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
@@ -55,6 +58,12 @@ public final class Literal extends AstNode {
     @Override
     public int hashCode() {
         return appendHash(appendHash(super.hashCode(), kind), value);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return Collections.emptyList();
     }
 
     @Override

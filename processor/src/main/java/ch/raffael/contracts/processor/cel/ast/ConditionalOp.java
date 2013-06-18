@@ -15,7 +15,10 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
@@ -63,6 +66,11 @@ public final class ConditionalOp extends AstNode {
         return hash;
     }
 
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return ImmutableList.of(condition, onTrue, onFalse);
+    }
     @Override
     protected void doAccept(AstVisitor visitor) {
         visitor.visit(this);

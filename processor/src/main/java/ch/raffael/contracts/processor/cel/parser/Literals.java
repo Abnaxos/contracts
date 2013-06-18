@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.impl;
+package ch.raffael.contracts.processor.cel.parser;
 
-import org.antlr.runtime.Token;
+import org.antlr.v4.runtime.Token;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.CelError;

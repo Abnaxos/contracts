@@ -15,8 +15,12 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Objects;
 
+import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
 
 
@@ -54,6 +58,12 @@ public final class UnaryOp extends AstNode {
     @Override
     public int hashCode() {
         return appendHash(appendHash(super.hashCode(), kind), expression);
+    }
+
+    @NotNull
+    @Override
+    protected List<AstNode> children() {
+        return Collections.singletonList(expression);
     }
 
     @Override

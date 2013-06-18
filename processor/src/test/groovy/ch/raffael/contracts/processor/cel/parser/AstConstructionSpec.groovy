@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.cel.impl
+package ch.raffael.contracts.processor.cel.parser
 
 import ch.raffael.contracts.processor.cel.CelErrorsException
 import ch.raffael.contracts.processor.cel.specutil.Parser
@@ -34,9 +34,11 @@ import static ch.raffael.contracts.processor.cel.specutil.Ast.*
 @TrackFeature
 class AstConstructionSpec extends Specification {
 
+    final Parser parser = new Parser()
+
     def "Sanity check: Throws CelErrorsException when parse errors occur"() {
       when:
-        this.clause "a b (c d)"
+        parser.clause "a b (c d)"
 
       then:
         thrown(CelErrorsException)
@@ -44,21 +46,17 @@ class AstConstructionSpec extends Specification {
 
     def "a+b"() {
       expect:
-        addition() == add(idRef('a'), idRef('b'))
+        parser.clause() == clause(add(idRef('a'), idRef('b')))
     }
 
     def "a.c+b"() {
       expect:
-        addition() == add(idRef(idRef('a'), 'c'), idRef('b'))
+        parser.clause() == clause(add(idRef(idRef('a'), 'c'), idRef('b')))
     }
 
     def "a.c(x)+b"() {
       expect:
-        addition() == add(method(idRef('a'), 'c', idRef('x')), idRef('b'))
-    }
-
-    def methodMissing(String name, Object args) {
-        Parser.methodMissing(name, args)
+        parser.clause() == clause(add(method(idRef('a'), 'c', idRef('x')), idRef('b')))
     }
 
 }

@@ -17,18 +17,19 @@ package ch.raffael.contracts.processor.cel.specutil
 
 import ch.raffael.contracts.processor.cel.CelErrorsException
 import ch.raffael.contracts.processor.cel.ast.AstNode
-import ch.raffael.contracts.processor.cel.impl.CelLexer
-import ch.raffael.contracts.processor.cel.impl.CelParser
-import org.antlr.runtime.ANTLRStringStream
-import org.antlr.runtime.CommonTokenStream
-import org.antlr.runtime.RecognitionException
+import ch.raffael.contracts.processor.cel.parser.AstBuilder
+import ch.raffael.contracts.processor.cel.parser.CelLexer
+import ch.raffael.contracts.processor.cel.parser.CelParser
+import ch.raffael.contracts.processor.cel.specutil.Parser
+import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.atn.ATNSimulator
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 class Parser {
 
-    static methodMissing(String name, argsObj) {
+    def methodMissing(String name, argsObj) {
         Object[] args = (Object[])argsObj
         String source
         if ( args.length == 1 ) {
@@ -45,25 +46,25 @@ class Parser {
 
     static AstNode parse(String rule, String source, Object... args) {
         String name
-        final List<RecognitionException> errors = new LinkedList<>();
-        CelLexer lexer = new CelLexer(new ANTLRStringStream(source)) {
+        List<RecognitionException> errors = []
+        ANTLRErrorListener errorListener = new BaseErrorListener() {
             @Override
-            public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
-                errors.add(e);
+            void syntaxError(Recognizer<?, ? extends ATNSimulator> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+                errors << e
             }
-        };
-        CelParser parser = new CelParser(new CommonTokenStream(lexer)) {
-            @Override
-            public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
-                errors.add(e);
-            }
-        };
-        AstNode result = parser.invokeMethod(rule, args.drop(1)) as AstNode
+        }
+        CelLexer lexer = new CelLexer(new ANTLRInputStream(source));
+        CelParser parser = new CelParser(new CommonTokenStream(lexer));
+        lexer.addErrorListener(errorListener)
+        parser.addErrorListener(errorListener)
+        AstBuilder builder = new AstBuilder()
+        builder.install(parser)
+        Object ctx = parser.invokeMethod(rule, args.drop(1))
         if ( errors ) {
             throw new CelErrorsException(errors)
         }
         else {
-            return result
+            return ctx.node
         }
     }
 }
