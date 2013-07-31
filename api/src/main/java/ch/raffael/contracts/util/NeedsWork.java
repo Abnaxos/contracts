@@ -23,14 +23,28 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Indicates that an element is incomplete and needs some work.
  *
+ * Both the compile-time annotation processor as well as the runtime class processor will
+ * print warnings whenever they encounter an element annotated with `@NeedsWork`.
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @Documented
 public @interface NeedsWork {
 
+    /**
+     * A description of what needs to be done. This will be printed in the warnings.
+     */
     String description();
 
+    /**
+     * References like docs etc.
+     */
     String[] seeAlso() default {};
+
+    /**
+     * If `true`, no warnings will be printed.
+     */
+    boolean quite() default false;
 
 }
