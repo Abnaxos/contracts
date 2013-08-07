@@ -77,8 +77,7 @@ primary returns [AstNode node]
     | literal
     | functionCall
     | typeref ACCESS CLASS
-    | classref? ACCESS THIS
-    // typeref, e.g. int.class or int[].class
+    | (typeref ACCESS)? THIS
     ;
 	
 selector
@@ -99,115 +98,110 @@ literal returns [AstNode node]
 	
 methodCall
     : ID PAREN_OPEN
-      ( first=expression (COMMA expression)*)?
+      ( expression (COMMA expression)*)?
       PAREN_CLOSE
     ;
 	
 functionCall
-	: OLD PAREN_OPEN expression PAREN_CLOSE
-	| THROWN PAREN_OPEN classref? PAREN_CLOSE
-	| paramFunction
-	| RESULT PAREN_OPEN PAREN_CLOSE
-	| EQUAL PAREN_OPEN expression COMMA expression PAREN_CLOSE
-	| EACH PAREN_OPEN ID COLON expression LAMBDA ifExpression PAREN_CLOSE
-	| REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE
-	;
-paramFunction
-	:	(fun=PARAM|fun=ARG) PAREN_OPEN (((ADD|SUB)? INT) | ID)? PAREN_CLOSE
-	;
+    : OLD PAREN_OPEN expression PAREN_CLOSE                                 #OldFunction
+    | THROWN PAREN_OPEN typeref? PAREN_CLOSE                                #ThrownFunction
+    | (PARAM|ARG) PAREN_OPEN (((ADD|SUB)? INT) | ID)? PAREN_CLOSE           #ParamFunction
+    | RESULT PAREN_OPEN PAREN_CLOSE                                         #ResultFunction
+    | EQUAL PAREN_OPEN expression COMMA expression PAREN_CLOSE              #EqualFunction
+    | EACH PAREN_OPEN expression COMMA ID LAMBDA ifExpression PAREN_CLOSE   #EachFunction
+    | REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE                       #RegexFunction
+    ;
 
 typeref
-	:
-	( ID (ACCESS ID)*
-	| primitiveType
-	) (INDEX_OPEN INDEX_CLOSE)*
-	;
-classref returns [String name=""]
-	: ID
-	  (ACCESS ID)*
-	;
+    :
+    ( ID (ACCESS ID)*
+    | primitiveType
+    ) (INDEX_OPEN INDEX_CLOSE)*
+    ;
 primitiveType
-	:	TINT | TLONG | TSHORT | TBYTE | TDOUBLE | TFLOAT | TCHAR | TBOOLEAN
-	;
+    :	TINT | TLONG | TSHORT | TBYTE | TDOUBLE | TFLOAT | TCHAR | TBOOLEAN
+    ;
 
-IF		: 'if';
-FINALLY 	: 'finally';
-TRUE		: 'true';
-FALSE		: 'false';
-NULL		: 'null';
-CLASS		: 'class';
+IF              : 'if';
+FINALLY         : 'finally';
+TRUE            : 'true';
+FALSE           : 'false';
+NULL            : 'null';
+CLASS           : 'class';
 
-TINT		: 'int';
-TLONG		: 'long';
-TSHORT		: 'short';
-TBYTE		: 'byte';
-TBOOLEAN	: 'boolean';
-TFLOAT		: 'float';
-TDOUBLE		: 'double';
-TCHAR		: 'char';
-TVOID		: 'void';
+TINT            : 'int';
+TLONG           : 'long';
+TSHORT          : 'short';
+TBYTE           : 'byte';
+TBOOLEAN        : 'boolean';
+TFLOAT          : 'float';
+TDOUBLE         : 'double';
+TCHAR           : 'char';
+TVOID           : 'void';
 
-THIS		: 'this';
-SUPER		: 'super';
+THIS            : 'this';
+SUPER           : 'super';
 
-OLD		: '@old';
-THROWN		: '@thrown';
-EQUAL		: '@equals';
-PARAM		: '@param';
-ARG		: '@arg';
-RESULT		: '@result';
-EACH		: '@each';
-REGEX		: '@regex';
+OLD             : '@old';
+THROWN          : '@thrown';
+EQUAL           : '@equals';
+PARAM           : '@param';
+ARG             : '@arg';
+RESULT          : '@result';
+EACH            : '@each';
+REGEX           : '@regex';
 
-CONDITIONAL	: '?';
+CONDITIONAL     : '?';
 
-LOGICAL_OR	: '||';
-LOGICAL_AND	: '&&';
+LOGICAL_OR      : '||';
+LOGICAL_AND     : '&&';
 
-BITWISE_OR	: '|';
-BITWISE_XOR	: '^';
-BITWISE_AND	: '&';
+BITWISE_OR      : '|';
+BITWISE_XOR     : '^';
+BITWISE_AND     : '&';
 
-EQ		: '==';
-NE		: '!=';
-GT		: '>';
-GE		: '>=';
-LT		: '<';
-LE		: '<=';
-INSTANCEOF	: 'instanceof';
+EQ              : '==';
+NE              : '!=';
+GT              : '>';
+GE              : '>=';
+LT              : '<';
+LE              : '<=';
+INSTANCEOF      : 'instanceof';
 
-ADD		: '+';
-SUB		: '-';
-MUL		: '*';
-DIV		: '/';
-MOD		: '%';
+ADD             : '+';
+SUB             : '-';
+MUL             : '*';
+DIV             : '/';
+MOD             : '%';
 
-LOGICAL_NOT	: '!';
-BITWISE_NOT	: '~';
+LOGICAL_NOT     : '!';
+BITWISE_NOT     : '~';
 
-LEFT_SHIFT	: '<<';
-RIGHT_SHIFT	: '>>';
-URIGHT_SHIFT	: '>>>';
+LEFT_SHIFT      : '<<';
+RIGHT_SHIFT     : '>>';
+URIGHT_SHIFT    : '>>>';
 
-PAREN_OPEN	: '(';
-PAREN_CLOSE	: ')';
-INDEX_OPEN	: '[';
-INDEX_CLOSE	: ']';
+PAREN_OPEN      : '(';
+PAREN_CLOSE     : ')';
+INDEX_OPEN      : '[';
+INDEX_CLOSE     : ']';
 
-ACCESS		: '.';
-COMMA		: ',';
-COLON		: ':';
-LAMBDA		: '->';
+ACCESS          : '.';
+COMMA           : ',';
+COLON           : ':';
+LAMBDA          : '->';
 
-ID	:	('a'..'z'|'A'..'Z'|'_'|'$') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'$')*;
+ID  :
+    ('a'..'z'|'A'..'Z'|'_'|'$') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'$')*
+    ;
 
-INT	:
-	( '0'
-	| ('1'..'9') DIGIT*
-	| '0' OCT_DIGIT+
-	| HEX_PREFIX HEX_DIGIT+
-	) ('l'|'L')?
-	;
+INT :
+    ( '0'
+    | ('1'..'9') DIGIT*
+    | '0' OCT_DIGIT+
+    | HEX_PREFIX HEX_DIGIT+
+    ) ('l'|'L')?
+    ;
 
 FLOAT
     :
@@ -226,49 +220,58 @@ FLOAT
     ;
     
 fragment HEX_PREFIX
-	: '0' ('x'|'X')
-	;
+    : '0' ('x'|'X')
+    ;
 
 STRING
-	:	'\"' ( ESCAPE_SEQUENCE | ~('\"'|'\\') )* '\"'
-	|	'\'' ( ESCAPE_SEQUENCE | ~('\''|'\\') )* '\''
-	;
+    : '\"' ( ESCAPE_SEQUENCE | ~('\"'|'\\') )* '\"'
+    | '\'' ( ESCAPE_SEQUENCE | ~('\''|'\\') )* '\''
+    ;
 
 fragment ESCAPE_SEQUENCE
-	:	'\\'
-	(	'n'
-	|	'r'
-	|	't'
-	|	'b'
-	|	'f'
-	|	'"'
-	|	'\''
-	|	'\\'
-	|	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-	|	'0'..'3' OCT_DIGIT OCT_DIGIT
-	|	OCT_DIGIT OCT_DIGIT
-	|	OCT_DIGIT
-	)
-	;
-
-fragment DIGIT	: '0'..'9' ;
-fragment OCT_DIGIT
-	:	'0'..'7';
-fragment HEX_DIGIT
-	:	'0'..'9' | 'a'..'f' | 'A'..'F';
-
-CHAR:  '\'' ( ESCAPE_SEQUENCE | ~'\'' ) '\'' ('c'|'C')
+    : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    | '0'..'3' OCT_DIGIT OCT_DIGIT
+    | OCT_DIGIT OCT_DIGIT
+    | OCT_DIGIT
+    )
     ;
 
-fragment
-EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
+fragment DIGIT
+    : '0'..'9'
+    ;
+fragment OCT_DIGIT
+    :	'0'..'7'
+    ;
+fragment HEX_DIGIT
+    :	'0'..'9' | 'a'..'f' | 'A'..'F'
+    ;
+
+CHAR: '\'' ( ESCAPE_SEQUENCE | ~'\'' ) '\'' ('c'|'C')
+    ;
+
+fragment EXPONENT
+    : ('e'|'E') ('+'|'-')? ('0'..'9')+
+    ;
 
 // whitespaces
-WS:	( ' '
-	| '\t'
-	| '\r'
-	| '\n'
-	) -> skip
+WS: ( ' '
+    | '\t'
+    | '\r'
+    | '\n'
+    ) -> skip
     ;
-COMMENT: '/*' .*? '*/' -> skip;
-LINE_COMMENT: '//' ~('\n'|'\r')* -> skip;
+COMMENT
+    : '/*' .*? '*/' -> skip
+    ;
+LINE_COMMENT
+    : '//' ~('\n'|'\r')* -> skip
+    ;

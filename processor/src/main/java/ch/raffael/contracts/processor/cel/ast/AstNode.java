@@ -27,6 +27,7 @@ import com.google.common.base.Objects;
 import ch.raffael.contracts.Ensure;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
+import ch.raffael.contracts.Require;
 import ch.raffael.contracts.processor.cel.CelError;
 import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.util.common.collections.USet;
@@ -114,6 +115,7 @@ public abstract class AstNode {
     }
 
     @NotNull
+    @Require("@each(@result(), child -> child != null)")
     protected abstract List<AstNode> children();
 
     public Position getPosition() {

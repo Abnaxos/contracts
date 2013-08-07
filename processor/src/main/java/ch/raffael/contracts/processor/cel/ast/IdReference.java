@@ -61,7 +61,12 @@ public final class IdReference extends Selector {
     @NotNull
     @Override
     protected List<AstNode> children() {
-        return Collections.singletonList(getSource());
+        if ( getSource() != null ) {
+            return Collections.singletonList(getSource());
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
 
     @Override

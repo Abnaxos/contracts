@@ -66,7 +66,11 @@ public final class MethodCall extends Selector {
     @NotNull
     @Override
     protected List<AstNode> children() {
-        return ImmutableList.<AstNode>builder().add(getSource()).addAll(arguments).build();
+        ImmutableList.Builder<AstNode> builder = ImmutableList.builder();
+        if ( getSource() != null ) {
+            builder.add(getSource());
+        }
+        return builder.addAll(arguments).build();
     }
 
     @Override
