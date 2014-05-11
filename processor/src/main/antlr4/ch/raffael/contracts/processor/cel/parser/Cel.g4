@@ -27,11 +27,26 @@ grammar Cel;
 }
 
 clause returns [Clause node]
-    :   FINALLY? ifExpression EOF
+    :   pre=topLevelExpr (IMPLY post+=topLevelExpr)*
+    |   directPost=IMPLY post+=topLevelExpr
     ;
 
-ifExpression returns [AstNode node]
-    :   ( IF PAREN_OPEN condition=expression PAREN_CLOSE )? expression
+topLevelExpr returns [AstNode node]
+    : expression
+    | throwExpression
+    | finallyExpression
+    ;
+
+throwExpression returns[Throw node]
+    :   THROW classRef ID? (COLON expression)?
+    ;
+
+finallyExpression returns [Finally node]
+    :   FINALLY expression
+    ;
+
+parenExpression returns [AstNode node]
+    :   expression (IMPLY parenExpression)?
     ;
 
 expression returns [AstNode node]
@@ -39,9 +54,10 @@ expression returns [AstNode node]
     |   expression (MUL|DIV|MOD) expression
     |   expression (ADD|SUB) expression
     |   expression (RIGHT_SHIFT|URIGHT_SHIFT|LEFT_SHIFT) expression
-    |   expression INSTANCEOF typeref
+    |   expression INSTANCEOF typeRef
     |   expression (LT|LE|GE|GT) expression
-    |   expression (EQ|NE) expression
+    |   expression (EQ|NE|IDENTICAL) expression
+    |   RETURN expression
     |   expression BITWISE_XOR expression
     |   expression BITWISE_OR expression
     |   expression BITWISE_AND expression
@@ -63,7 +79,7 @@ unaryNoPosNeg returns [AstNode node]
     ;
 cast returns [AstNode node]
     :	PAREN_OPEN primitiveType PAREN_CLOSE unary
-    |	PAREN_OPEN typeref PAREN_CLOSE unaryNoPosNeg
+    |	PAREN_OPEN typeRef PAREN_CLOSE unaryNoPosNeg
     ;
 	
 factor returns [AstNode node]
@@ -71,21 +87,29 @@ factor returns [AstNode node]
     primary (selector)*
     ;
 primary returns [AstNode node]
-    : PAREN_OPEN expression PAREN_CLOSE
+    : PAREN_OPEN parenExpression PAREN_CLOSE
+    | INDEX_OPEN expression INDEX_CLOSE // old
     | methodCall
     | ID
     | literal
-    | functionCall
-    | typeref ACCESS CLASS
-    | (typeref ACCESS)? THIS
+    | ARGREF
+    | RETURN
+    | regex
+    | typeRef ACCESS CLASS
+    | (typeRef ACCESS)? THIS
     ;
 	
 selector
     : ACCESS ID
     | ACCESS methodCall
+    | ACCESS FOR CONDITIONAL? PAREN_OPEN typeRef? ID COLON expression PAREN_CLOSE
     | INDEX_OPEN expression INDEX_CLOSE
     ;
-	
+
+regex
+    : REGEX ( PAREN_OPEN (flags+=ID (COMMA flags+=ID)*)? PAREN_CLOSE )?
+    ;
+
 literal returns [AstNode node]
     : STRING
     | CHAR
@@ -102,28 +126,29 @@ methodCall
       PAREN_CLOSE
     ;
 	
-functionCall
+/*functionCall
     : OLD PAREN_OPEN expression PAREN_CLOSE                                 #OldFunction
     | THROWN PAREN_OPEN typeref? PAREN_CLOSE                                #ThrownFunction
     | (PARAM|ARG) PAREN_OPEN (((ADD|SUB)? INT) | ID)? PAREN_CLOSE           #ParamFunction
     | RESULT PAREN_OPEN PAREN_CLOSE                                         #ResultFunction
     | EQUAL PAREN_OPEN expression COMMA expression PAREN_CLOSE              #EqualFunction
-    | EACH PAREN_OPEN expression COMMA ID LAMBDA ifExpression PAREN_CLOSE   #EachFunction
+    | EACH PAREN_OPEN expression COMMA ID THEN ifExpression PAREN_CLOSE     #EachFunction
     | REGEX PAREN_OPEN STRING (COMMA ID)* PAREN_CLOSE                       #RegexFunction
-    ;
+    ;*/
 
-typeref
+typeRef
     :
-    ( ID (ACCESS ID)*
+    ( classRef
     | primitiveType
     ) (INDEX_OPEN INDEX_CLOSE)*
+    ;
+classRef returns [String className]
+    : ID (ACCESS ID)*
     ;
 primitiveType
     :	TINT | TLONG | TSHORT | TBYTE | TDOUBLE | TFLOAT | TCHAR | TBOOLEAN
     ;
 
-IF              : 'if';
-FINALLY         : 'finally';
 TRUE            : 'true';
 FALSE           : 'false';
 NULL            : 'null';
@@ -142,14 +167,9 @@ TVOID           : 'void';
 THIS            : 'this';
 SUPER           : 'super';
 
-OLD             : '@old';
-THROWN          : '@thrown';
-EQUAL           : '@equals';
-PARAM           : '@param';
-ARG             : '@arg';
-RESULT          : '@result';
-EACH            : '@each';
-REGEX           : '@regex';
+THROW           : 'throw' | 'throws';
+FINALLY         : 'finally';
+RETURN          : 'return';
 
 CONDITIONAL     : '?';
 
@@ -167,6 +187,7 @@ GE              : '>=';
 LT              : '<';
 LE              : '<=';
 INSTANCEOF      : 'instanceof';
+IDENTICAL       : '===';
 
 ADD             : '+';
 SUB             : '-';
@@ -189,11 +210,51 @@ INDEX_CLOSE     : ']';
 ACCESS          : '.';
 COMMA           : ',';
 COLON           : ':';
-LAMBDA          : '->';
+IMPLY           : '->';
 
-ID  :
-    ('a'..'z'|'A'..'Z'|'_'|'$') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'$')*
+FOR             : 'for';
+
+// some java keywords that aren't used in Cel
+JAVA_KEYWORD
+    : 'case'
+    | 'const'
+    | 'do'
+    | 'else'
+    | 'final'
+    | 'goto'
+    | 'if'
+    | 'switch'
+    | 'while'
     ;
+
+ID
+    : ID_START ID_PART*
+    ;
+fragment ID_START
+    :   [a-zA-Z$_] // these are the "java letters" below 0xFF
+    |   // covers all characters above 0xFF which are not a surrogate
+        ~[\u0000-\u00FF\uD800-\uDBFF]
+        {Character.isJavaIdentifierStart(_input.LA(-1))}?
+    |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+        [\uD800-\uDBFF] [\uDC00-\uDFFF]
+        {Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+    ;
+
+fragment ID_PART
+    :   [a-zA-Z0-9$_] // these are the "java letters or digits" below 0xFF
+    |   // covers all characters above 0xFF which are not a surrogate
+        ~[\u0000-\u00FF\uD800-\uDBFF]
+        {Character.isJavaIdentifierPart(_input.LA(-1))}?
+    |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+        [\uD800-\uDBFF] [\uDC00-\uDFFF]
+        {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+    ;
+
+ARGREF
+    : '#'
+    ( ('+'|'-')? DIGIT+
+    | '#'
+    );
 
 INT :
     ( '0'
@@ -224,10 +285,17 @@ fragment HEX_PREFIX
     ;
 
 STRING
+    : STRING_VALUE
+    ;
+
+REGEX
+    : '$' STRING_VALUE
+    ;
+
+fragment STRING_VALUE
     : '\"' ( ESCAPE_SEQUENCE | ~('\"'|'\\') )* '\"'
     | '\'' ( ESCAPE_SEQUENCE | ~('\''|'\\') )* '\''
     ;
-
 fragment ESCAPE_SEQUENCE
     : '\\'
     ( 'n'

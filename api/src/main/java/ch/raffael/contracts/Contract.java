@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package ch.raffael.contracts;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -25,18 +26,23 @@ import javax.annotation.Syntax;
 
 
 /**
- * Require that a *precondition* is `true` on method entry.
- *
- * **Inheritance**: Extending classes may weaken preconditions, but not strengthen them.
- * Inherited preconditions will be *OR*-associated.
- *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Target({ ElementType.METHOD, ElementType.PARAMETER })
-@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Require {
+@Repeatable(Contract.List.class)
+public @interface Contract {
 
-    @Syntax("Cel") String[] value();
+    @Syntax("Cel")
+    String value();
+
+    @Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @interface List {
+        Contract[] value();
+    }
+
 
 }

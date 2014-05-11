@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ public abstract class AbstractAstVisitor implements AstVisitor {
 
     @Override
     public void visit(Clause clause) {
-        clause.getExpression().accept(this);
+        clause.children().forEach(c -> {c.accept(this);});
     }
 
     @Override
-    public void visit(IfExpression ifExpression) {
-        ifExpression.getCondition().accept(this);
-        ifExpression.getExpression().accept(this);
+    public void visit(Imply imply) {
+        imply.getCondition().accept(this);
+        imply.getImplies().accept(this);
     }
 
     @Override

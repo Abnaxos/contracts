@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts;
+package ch.raffael.contracts.macro;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,28 +23,18 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Syntax;
 
-import ch.raffael.contracts.util.NeedsWork;
-
 
 /**
- * Define a contract that must be `true` at all times.
- *
- * Invariants will be checked both on method entry and method exit. <strike>They apply
- * to public non-static methods only, as only these are considered the public interface
- * of an object</strike> (not sure about that).
- *
- * **Inheritance**: Invariant contracts may be strengthened by extending classes, but not
- * weakened. Inherited contracts will be *AND*-associated.
+ * An alias for a contract annotation when applied to a class.
  *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.CLASS)
 @Documented
-@NeedsWork(description = "Specify when exactly this applies: public only?",
-           seeAlso = "JavaDoc")
-public @interface Invariant {
+public @interface ClassContract {
 
-    @Syntax("Cel") String[] value();
+    @Syntax("Cel")
+    String value();
 
 }

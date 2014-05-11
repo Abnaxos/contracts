@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
@@ -27,44 +27,23 @@ import ch.raffael.contracts.processor.cel.Position;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class IfExpression extends AstNode {
+public class Finally extends AstNode {
 
-    private final AstNode condition;
     private final AstNode expression;
 
-    IfExpression(Position position, AstNode condition, AstNode expression) {
+    public Finally(Position position, AstNode expression) {
         super(position);
-        this.condition = condition;
         this.expression = expression;
     }
 
-    @Override
-    protected void toString(Objects.ToStringHelper toString) {
-        super.toString(toString);
-        toString.add("condition", condition).addValue(expression);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if ( super.equals(o) ) {
-            IfExpression that = (IfExpression)o;
-            return this.condition.equals(that.condition)
-                    && this.expression.equals(that.expression);
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return appendHash(appendHash(super.hashCode(), this.condition), this.expression);
+    public AstNode getExpression() {
+        return expression;
     }
 
     @NotNull
     @Override
     protected List<AstNode> children() {
-        return ImmutableList.of(condition, expression);
+        return Collections.singletonList(expression);
     }
 
     @Override
@@ -72,11 +51,28 @@ public final class IfExpression extends AstNode {
         visitor.visit(this);
     }
 
-    public AstNode getCondition() {
-        return condition;
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + Objects.hashCode(expression);
     }
 
-    public AstNode getExpression() {
-        return expression;
+    @Override
+    public boolean equals(Object obj) {
+        if ( this == obj ) {
+            return true;
+        }
+        if ( obj == null || getClass() != obj.getClass() ) {
+            return false;
+        }
+        if ( !super.equals(obj) ) {
+            return false;
+        }
+        final Finally other = (Finally)obj;
+        return Objects.equal(this.expression, other.expression);
+    }
+
+    @Override
+    protected void toString(Objects.ToStringHelper toString) {
+        toString.addValue(expression);
     }
 }

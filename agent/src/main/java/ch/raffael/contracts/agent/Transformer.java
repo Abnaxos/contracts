@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.Modifier;
 
+import ch.raffael.contracts.Contract;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
-import ch.raffael.contracts.Require;
 import ch.raffael.contracts.internal.Log;
 
 
@@ -47,7 +47,7 @@ class Transformer implements ClassFileTransformer {
     @Nullable
     public byte[] transform(@NotNull ClassLoader loader,
                             @NotNull String className,
-                            @Require("classBeingRedefined==null") Class<?> classBeingRedefined,
+                            @Contract("classBeingRedefined==null") Class<?> classBeingRedefined,
                             @Nullable ProtectionDomain protectionDomain,
                             @NotNull byte[] classfileBuffer)
             throws IllegalClassFormatException {

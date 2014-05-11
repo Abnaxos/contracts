@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.meta;
+package ch.raffael.contracts.macro;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,16 +25,19 @@ import javax.annotation.Syntax;
 
 
 /**
+ * An alias for a contract annotation when applied to a parameter or field or method. If applied to a field, `##` refers
+ * to the field's value. If applied to a method and a {@link MethodContract} annotation is present, the expression of
+ * the {@link MethodContract} annotation is used. If no {@link MethodContract} annotation is present, `##` refers to the
+ * return value.
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Documented
 @Target(ElementType.ANNOTATION_TYPE)
-@Retention(RetentionPolicy.SOURCE)
-public @interface Equivalent {
+@Retention(RetentionPolicy.CLASS)
+@Documented
+public @interface ValueContract {
 
-    @Syntax("Cel") String asInvariant() default "";
-    @Syntax("Cel") String asEnsure() default "";
-    @Syntax("Cel") String asRequire() default "";
-    @Syntax("Cel") String onParameter() default "";
+    @Syntax("Cel")
+    String value();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 import javax.annotation.Syntax;
 
 import ch.raffael.contracts.meta.Permanent;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**
@@ -40,6 +41,7 @@ import ch.raffael.contracts.meta.Permanent;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 @Permanent
+@NeedsWork(description = "Consider using @Synchronized, choosing lock()/unlock() if the result of the expression is a Lock")
 public @interface Locked {
 
     @Syntax("Cel") String value();

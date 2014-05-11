@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.ct;
+package ch.raffael.contracts.processor.util;
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class AsmException extends RuntimeException {
+public class IllegalClassNameException extends Exception {
 
-    public AsmException() {
+    public IllegalClassNameException() {
         super();
     }
 
-    public AsmException(String message) {
+    public IllegalClassNameException(String message) {
         super(message);
     }
 
-    public AsmException(Throwable cause) {
-        super(cause != null ? cause.toString() : null, cause);
+    public IllegalClassNameException(Throwable cause) {
+        super(cause);
     }
 
-    public AsmException(String message, Throwable cause) {
+    public IllegalClassNameException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenFactory;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -33,7 +32,19 @@ import ch.raffael.contracts.processor.cel.ast.Nodes;
 import ch.raffael.util.common.NotImplementedException;
 import ch.raffael.util.common.UnreachableCodeException;
 
-import static ch.raffael.contracts.processor.cel.parser.CelParser.*;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.ClauseContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.ExpressionContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.FactorContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.FinallyExpressionContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.LiteralContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.MethodCallContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.ParenExpressionContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.PrimaryContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.SelectorContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.ThrowExpressionContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.TopLevelExprContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.UnaryContext;
+import static ch.raffael.contracts.processor.cel.parser.CelParser.UnaryNoPosNegContext;
 
 
 /**
@@ -50,22 +61,44 @@ public class AstBuilder extends CelBaseListener {
     @Override
     public void exitClause(ClauseContext ctx) {
         Position pos;
-        if ( ctx.FINALLY() != null ) {
-            pos = new Position(ctx.FINALLY().getSymbol());
+        if ( ctx.directPost != null ) {
+            pos = new Position(ctx.directPost);
         }
         else {
-            pos = ctx.ifExpression().node.getPosition();
+            pos = ctx.pre.node.getPosition();
         }
-        ctx.node = Nodes.clause(ctx.ifExpression().node.getPosition(), ctx.ifExpression().node, ctx.FINALLY() != null);
+        ctx.node = Nodes.clause(pos, ctx.pre.node, ctx.post.stream().map(c -> c.node).iterator());
     }
 
     @Override
-    public void exitIfExpression(IfExpressionContext ctx) {
-        if ( ctx.condition != null ) {
-            ctx.node = Nodes.ifExpression(ctx.IF().getSymbol(), ctx.condition.node, ctx.expression(1).node);
+    public void exitTopLevelExpr(@NotNull TopLevelExprContext ctx) {
+        if ( ctx.expression() != null ) {
+            ctx.node = ctx.expression().node;
         }
-        else {
-            ctx.node = ctx.expression(0).node;
+        else if ( ctx.throwExpression() != null ) {
+            ctx.node = ctx.expression().node;
+        }
+        else if ( ctx.finallyExpression() != null ) {
+            ctx.node = ctx.finallyExpression().node;
+        }
+    }
+
+    @Override
+    public void exitThrowExpression(@NotNull ThrowExpressionContext ctx) {
+        ctx.node = Nodes.throwExpr(ctx.THROW().getSymbol(), ctx.classRef().className, ctx.ID().getText(),
+                                   ctx.expression() == null ? null : ctx.expression().node);
+    }
+
+    @Override
+    public void exitFinallyExpression(@NotNull FinallyExpressionContext ctx) {
+        ctx.node = Nodes.finallyExpr(ctx.FINALLY().getSymbol(), ctx.expression().node);
+    }
+
+    @Override
+    public void exitParenExpression(@NotNull ParenExpressionContext ctx) {
+        ctx.node = ctx.expression().node;
+        if ( ctx.parenExpression() != null ) {
+            ctx.node = Nodes.imply(ctx.node.getPosition(), ctx.node, ctx.parenExpression().node);
         }
     }
 
@@ -166,9 +199,6 @@ public class AstBuilder extends CelBaseListener {
         else if ( ctx.literal() != null ) {
             ctx.node = ctx.literal().node;
         }
-        else if ( ctx.functionCall() != null ) {
-            /*FIXME:*/throw new NotImplementedException();
-        }
         else if ( ctx.CLASS() != null ) {
             /*FIXME:*/throw new NotImplementedException();
         }
@@ -235,8 +265,7 @@ public class AstBuilder extends CelBaseListener {
         }
 
         @Override
-        public void setTokenFactory(TokenFactory<?> factory) {
-            delegate.setTokenFactory(factory);
+        public void reset(@NotNull Parser recognizer) {
         }
 
         @Override
@@ -257,23 +286,18 @@ public class AstBuilder extends CelBaseListener {
         }
 
         @Override
-        public void beginErrorCondition(@NotNull Parser recognizer) {
-            delegate.beginErrorCondition(recognizer);
-        }
-
-        @Override
         public boolean inErrorRecoveryMode(@NotNull Parser recognizer) {
             return delegate.inErrorRecoveryMode(recognizer);
         }
 
         @Override
-        public void endErrorCondition(@NotNull Parser recognizer) {
-            delegate.endErrorCondition(recognizer);
+        public void reportError(@NotNull Parser recognizer, @Nullable RecognitionException e) throws RecognitionException {
+            delegate.reportError(recognizer, e);
         }
 
         @Override
-        public void reportError(@NotNull Parser recognizer, @Nullable RecognitionException e) throws RecognitionException {
-            delegate.reportError(recognizer, e);
+        public void reportMatch(@NotNull Parser recognizer) {
+            delegate.reportMatch(recognizer);
         }
 
         private void stopAstBuilding(Parser parser) {

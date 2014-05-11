@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Syntax;
 
-import ch.raffael.contracts.meta.Equivalent;
+import ch.raffael.contracts.macro.ValueContract;
+import ch.raffael.contracts.util.NeedsWork;
 
 
 /**
@@ -38,9 +39,8 @@ import ch.raffael.contracts.meta.Equivalent;
 @Documented
 @Target({ ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.CLASS)
-@Equivalent(
-        asEnsure = "@regex(pattern(), flags()).matches(@result())",
-        onParameter = "@regex(pattern(), flags()).matches(@param())")
+@ValueContract("$(pattern(), flags()).matches(##)")
+@NeedsWork(description = "The above syntax for the macro isn't actually valid. Think of something here.")
 public @interface Matches {
 
     @Syntax("Regex") String pattern();

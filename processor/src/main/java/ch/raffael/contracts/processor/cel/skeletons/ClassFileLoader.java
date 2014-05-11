@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.ct;
+package ch.raffael.contracts.processor.cel.skeletons;
+
+import java.io.File;
+import java.io.IOException;
+
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class IllegalClassNameException extends Exception {
+public interface ClassFileLoader {
 
-    public IllegalClassNameException() {
-        super();
+    byte[] loadClassFile(String className) throws IOException;
+
+    static String nameToPath(String name) {
+        return nameToPath(name, '/');
     }
 
-    public IllegalClassNameException(String message) {
-        super(message);
+    static String nameToFilePath(String name) {
+        return nameToPath(name, File.separatorChar);
     }
 
-    public IllegalClassNameException(Throwable cause) {
-        super(cause);
+    static String nameToPath(String name, char separator) {
+        return name.replace('.', separator) + ".class";
     }
 
-    public IllegalClassNameException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

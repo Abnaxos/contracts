@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ch.raffael.contracts.processor.cel.skeletons;
 
 /**
- * Compile-time representations of Java classes and members.
+ * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-package ch.raffael.contracts.processor.ct;
+public class SkeletonInvocationError extends AbstractMethodError {
+
+    public SkeletonInvocationError() {
+        super("Attempt to invoke skeleton method");
+    }
+
+}

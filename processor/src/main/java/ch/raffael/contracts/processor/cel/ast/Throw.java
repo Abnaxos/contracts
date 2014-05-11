@@ -15,11 +15,10 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
@@ -29,35 +28,42 @@ import ch.raffael.contracts.processor.cel.Position;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public final class Clause extends AstNode {
+public class Throw extends AstNode {
 
-    private final AstNode precondition;
-    private final List<AstNode> postconditions;
+    private final String throwable;
+    private final String variable;
+    private final AstNode expression;
 
-    Clause(@NotNull Position pos, @Nullable AstNode precondition, @NotNull Iterator<AstNode> postconditions) {
-        super(pos);
-        this.precondition = precondition;
-        this.postconditions = ImmutableList.copyOf(postconditions);
-    }
-
-    @Nullable
-    public AstNode getPrecondition() {
-        return precondition;
+    public Throw(Position position, String throwable, String variable, AstNode expression) {
+        super(position);
+        this.throwable = throwable;
+        this.variable = variable;
+        this.expression = expression;
     }
 
     @NotNull
-    public List<AstNode> getPostconditions() {
-        return postconditions;
+    public String getThrowable() {
+        return throwable;
+    }
+
+    @Nullable
+    public String getVariable() {
+        return variable;
+    }
+
+    @Nullable
+    public AstNode getExpression() {
+        return expression;
     }
 
     @NotNull
     @Override
     protected List<AstNode> children() {
-        if ( precondition != null ) {
-            return ImmutableList.<AstNode>builder().add(precondition).addAll(postconditions).build();
+        if ( expression == null ) {
+            return Collections.emptyList();
         }
         else {
-            return postconditions;
+            return Collections.singletonList(expression);
         }
     }
 
@@ -68,7 +74,7 @@ public final class Clause extends AstNode {
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + Objects.hashCode(precondition, postconditions);
+        return 31 * super.hashCode() + Objects.hashCode(throwable, variable, expression);
     }
 
     @Override
@@ -82,14 +88,15 @@ public final class Clause extends AstNode {
         if ( !super.equals(obj) ) {
             return false;
         }
-        final Clause that = (Clause)obj;
-        return Objects.equal(this.precondition, that.precondition) && Objects.equal(this.postconditions, that.postconditions);
+        final Throw other = (Throw)obj;
+        return Objects.equal(this.throwable, other.throwable) && Objects.equal(this.variable, other.variable) && Objects.equal(this.expression, other.expression);
     }
 
     @Override
     protected void toString(Objects.ToStringHelper toString) {
-        toString.add("pre", precondition);
-        toString.add("post", postconditions);
+        toString.omitNullValues()
+                .add("throwable", throwable)
+                .add("variable", variable)
+                .addValue(expression);
     }
-
 }

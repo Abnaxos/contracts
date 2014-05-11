@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.google.common.base.Objects;
 
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.processor.cel.Position;
-import ch.raffael.contracts.processor.ct.ClassName;
+import ch.raffael.contracts.processor.util.ClassName;
 
 
 /**

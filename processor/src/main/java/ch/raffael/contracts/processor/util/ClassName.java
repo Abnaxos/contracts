@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.ct;
+package ch.raffael.contracts.processor.util;
 
 import java.util.Map;
 
@@ -23,13 +23,15 @@ import com.google.common.collect.ImmutableMap;
 import ch.raffael.contracts.NonNegative;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
+import ch.raffael.contracts.util.NeedsWork;
 
-import static ch.raffael.contracts.processor.util.Identifiers.*;
+import static ch.raffael.contracts.processor.util.Identifiers.isValidIdentifier;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
+@NeedsWork(description = "org.ow2.asm.Type already provides this functionality")
 public final class ClassName {
 
     public static final ClassName BOOLEAN = new ClassName("boolean", 0, 'Z');

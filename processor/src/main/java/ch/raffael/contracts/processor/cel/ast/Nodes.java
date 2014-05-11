@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
  */
 package ch.raffael.contracts.processor.cel.ast;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import org.antlr.v4.runtime.Token;
 
+import ch.raffael.contracts.Contract;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
-import ch.raffael.contracts.Require;
 import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.contracts.processor.cel.parser.CelLexer;
 import ch.raffael.contracts.util.NeedsWork;
@@ -104,23 +105,43 @@ public final class Nodes {
     }
 
     @NotNull
-    public static Clause clause(@NotNull Position pos, @NotNull AstNode expression, boolean isFinally) {
-        return new Clause(pos, expression, isFinally);
+    public static Clause clause(@NotNull Position pos, @NotNull AstNode precondition, @NotNull Iterator<AstNode> postconditions) {
+        return new Clause(pos, precondition, postconditions);
     }
 
     @NotNull
-    public static Clause clause(Token tok, @NotNull AstNode expression, boolean isFinally) {
-        return new Clause(pos(tok), expression, isFinally);
+    public static Clause clause(Token tok, @NotNull AstNode precondition, @NotNull Iterator<AstNode> postconditions) {
+        return new Clause(pos(tok), precondition, postconditions);
     }
 
     @NotNull
-    public static IfExpression ifExpression(@NotNull Position pos, @NotNull AstNode condition, @NotNull AstNode expression) {
-        return new IfExpression(pos, condition, expression);
+    public static Throw throwExpr(@NotNull Position pos, @NotNull String throwable, @NotNull String variable, @NotNull AstNode expression) {
+        return new Throw(pos, throwable, variable, expression);
     }
 
     @NotNull
-    public static IfExpression ifExpression(@NotNull Token tok, @NotNull AstNode condition, @NotNull AstNode expression) {
-        return new IfExpression(pos(tok), condition, expression);
+    public static Throw throwExpr(@NotNull Token tok, @NotNull String throwable, @NotNull String variable, @NotNull AstNode expression) {
+        return new Throw(pos(tok), throwable, variable, expression);
+    }
+
+    @NotNull
+    public static Finally finallyExpr(@NotNull Position pos, @NotNull AstNode expression) {
+        return new Finally(pos, expression);
+    }
+
+    @NotNull
+    public static Finally finallyExpr(Token tok, @NotNull AstNode expression) {
+        return new Finally(pos(tok), expression);
+    }
+
+    @NotNull
+    public static Imply imply(@NotNull Position pos, @NotNull AstNode condition, @NotNull AstNode expression) {
+        return new Imply(pos, condition, expression);
+    }
+
+    @NotNull
+    public static Imply imply(@NotNull Token tok, @NotNull AstNode condition, @NotNull AstNode expression) {
+        return new Imply(pos(tok), condition, expression);
     }
 
     @NotNull
@@ -256,7 +277,7 @@ public final class Nodes {
     @NotNull
     public static Literal literal(@NotNull Position pos,
                                   @NotNull Literal.Kind kind,
-                                  @Require("kind.isValueCompatible(value)") Object value)
+                                  @Contract("kind.isValueCompatible(value)") Object value)
     {
         return new Literal(pos, kind, value);
     }
@@ -264,7 +285,7 @@ public final class Nodes {
     @NotNull
     public static Literal literal(@NotNull Token tok,
                                   @NotNull Literal.Kind kind,
-                                  @Require("kind.isValueCompatible(value)") Object value)
+                                  @Contract("kind.isValueCompatible(value)") Object value)
     {
         return new Literal(pos(tok), kind, value);
     }

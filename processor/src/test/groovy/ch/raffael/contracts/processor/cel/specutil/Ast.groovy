@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ch.raffael.contracts.processor.cel.specutil
 import ch.raffael.contracts.processor.cel.Position
 import ch.raffael.contracts.processor.cel.ast.*
 import ch.raffael.util.common.UnreachableCodeException
+import com.google.common.collect.Iterators
 import org.codehaus.groovy.runtime.StackTraceUtils
 
 /**
@@ -32,12 +33,12 @@ class Ast {
         Nodes.blank(where())
     }
 
-    static Clause clause(AstNode expression, boolean isFinally=false) {
-        Nodes.clause(where(), expression, isFinally)
+    static Clause clause(AstNode precondition, Iterator<AstNode> postconditions = Iterators.emptyIterator()) {
+        Nodes.clause(where(), precondition, postconditions)
     }
 
-    static IfExpression ifExpr(AstNode condition, AstNode expression) {
-        Nodes.ifExpression(where(), condition, expression)
+    static Imply ifExpr(AstNode condition, AstNode expression) {
+        Nodes.imply(where(), condition, expression)
     }
 
     static ConditionalOp conditional(AstNode condition, AstNode onTrue, AstNode onFalse) {

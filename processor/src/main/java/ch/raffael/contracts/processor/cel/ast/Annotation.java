@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package ch.raffael.contracts.processor.cel.ast;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import ch.raffael.contracts.processor.ct.CtClass;
 import ch.raffael.util.common.UnexpectedException;
 
 
@@ -46,8 +45,6 @@ public class Annotation<T> {
     private static <T> Annotation<T> annotation(Class<T> type) {
         return new Annotation<T>(type);
     }
-
-    public static final Annotation<CtClass> type = annotation(CtClass.class);
 
     static {
         try {

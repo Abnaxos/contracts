@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright 2012-2013 Raffael Herzog
+  ~ Copyright 2012-2014 Raffael Herzog
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
   <description></description>
 
   <properties>
-    <antlr.version>4.0</antlr.version>
+    <antlr.version>4.2.2</antlr.version>
   </properties>
 
   <parent>
@@ -62,7 +62,7 @@
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-all</artifactId>
+      <artifactId>asm-debug-all</artifactId>
     </dependency>
 
     <dependency>
@@ -93,6 +93,11 @@
               <goal>antlr4</goal>
             </goals>
             <phase>generate-sources</phase>
+            <configuration>
+              <excludes>
+                <exclude>ch/raffael/contracts/processor/cel/parser/Cel2.g4</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>

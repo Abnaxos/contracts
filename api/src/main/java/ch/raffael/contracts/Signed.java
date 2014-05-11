@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ch.raffael.contracts.meta.Equivalent;
+import ch.raffael.contracts.macro.ValueContract;
 
 
 /**
@@ -33,9 +33,7 @@ import ch.raffael.contracts.meta.Equivalent;
 @Documented
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.CLASS)
-@Equivalent(
-        asEnsure = "true // @result()>=0 || @result()<0",
-        onParameter = "true // @param()>=0 || @param()<0")
+@ValueContract("true")
 public @interface Signed {
 
 }

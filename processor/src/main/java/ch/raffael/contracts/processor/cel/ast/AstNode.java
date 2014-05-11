@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,14 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 
-import ch.raffael.contracts.Ensure;
+import ch.raffael.contracts.Contract;
 import ch.raffael.contracts.NotNull;
 import ch.raffael.contracts.Nullable;
-import ch.raffael.contracts.Require;
 import ch.raffael.contracts.processor.cel.CelError;
 import ch.raffael.contracts.processor.cel.Position;
 import ch.raffael.util.common.collections.USet;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 
 /**
@@ -115,7 +114,7 @@ public abstract class AstNode {
     }
 
     @NotNull
-    @Require("@each(@result(), child -> child != null)")
+    @Contract("result.for(child: child != null)")
     protected abstract List<AstNode> children();
 
     public Position getPosition() {
@@ -135,7 +134,7 @@ public abstract class AstNode {
     }
 
     @NotNull
-    @Ensure("@result == visitor")
+    @Contract("return === visitor")
     public <T extends AstVisitor> T accept(@NotNull T visitor) {
         doAccept(visitor);
         return visitor;
@@ -178,7 +177,7 @@ public abstract class AstNode {
     }
 
     @SuppressWarnings("unchecked")
-    @Ensure("if(fallback!=null) @result!=null")
+    @Contract("fallback != null -> return != null")
     public <T> T get(@NotNull Annotation<T> annotation, T fallback) {
         T value = get(annotation);
         return value == null ? fallback : value;

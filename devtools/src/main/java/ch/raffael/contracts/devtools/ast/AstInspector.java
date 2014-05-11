@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,6 @@ public class AstInspector {
                         .append(node.getSymbol())
                         .append(" rule ")
                         .append(parser.getRuleNames()[parser.getContext().getRuleIndex()])
-                        .append(" alt=" + parser.getContext().altNum)
                         .append('\n');
             }
 

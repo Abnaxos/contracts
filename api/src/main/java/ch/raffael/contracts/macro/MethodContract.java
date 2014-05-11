@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Raffael Herzog
+ * Copyright 2012-2014 Raffael Herzog
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.raffael.contracts.processor.ct;
+package ch.raffael.contracts.macro;
 
-import java.io.IOException;
-import java.net.URL;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import ch.raffael.contracts.NotNull;
-import ch.raffael.contracts.Nullable;
-import ch.raffael.contracts.Require;
+import javax.annotation.Syntax;
 
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public interface ClassSource {
+@Target(ElementType.ANNOTATION_TYPE)
+@Retention(RetentionPolicy.CLASS)
+@Documented
+public @interface MethodContract {
 
-    @Nullable
-    URL findClass(@Require("name.getArrayDepth()==0")
-                  @NotNull
-                  ClassName name)
-            throws IOException;
+    @Syntax("Cel")
+    String value();
 
 }
