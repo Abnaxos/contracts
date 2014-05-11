@@ -85,7 +85,15 @@ public class AstBuilder extends CelBaseListener {
 
     @Override
     public void exitThrowExpression(@NotNull ThrowExpressionContext ctx) {
-        ctx.node = Nodes.throwExpr(ctx.THROW().getSymbol(), ctx.classRef().className, ctx.ID().getText(),
+        String throwable;
+        if ( ctx.classRef() != null ) {
+            throwable = ctx.classRef().className;
+        }
+        else {
+            assert ctx.wildcard != null;
+            throwable = "java.lang.Throwable";
+        }
+        ctx.node = Nodes.throwExpr(ctx.THROW().getSymbol(), throwable, ctx.ID().getText(),
                                    ctx.expression() == null ? null : ctx.expression().node);
     }
 

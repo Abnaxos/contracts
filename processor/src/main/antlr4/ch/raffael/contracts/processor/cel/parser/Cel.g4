@@ -38,7 +38,7 @@ topLevelExpr returns [AstNode node]
     ;
 
 throwExpression returns[Throw node]
-    :   THROW classRef ID? (COLON expression)?
+    :   THROW (classRef|wildcard=MUL) ID? (COLON expression)?
     ;
 
 finallyExpression returns [Finally node]
